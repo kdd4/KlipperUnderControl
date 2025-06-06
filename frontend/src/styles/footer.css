@@ -1,0 +1,88 @@
+/*Переменные*/
+:root {
+    --hover-color: rgb(255, 227, 227);
+    --logo-color: rgb(212, 17, 21);
+	  --main-color: rgb(29, 29, 29);
+	  --text-light: rgb(255, 255, 254);
+	  --text-dark: rgb(32, 32, 32);
+	  --href-visited: rgb(255, 227, 227);
+	  --block-color: rgb(44, 44, 44);
+	  --block-color-set: rgb(45, 43, 43);
+}
+
+.footer {
+    display: flex;
+    background-color: var(--main-color);
+    color: var(--text-light);
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    border-top: 1px solid var(--block-color);
+    padding: 1em;
+}
+
+.scroll-top {
+    background-color: var(--logo-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-top:hover {
+    background-color: var(--hover-color);
+    color: var(--text-dark);
+    transform: translateY(-2px);
+}
+
+.system-info {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    color: var(--text-light);
+    margin: 1em;
+}
+
+.temp-status {
+    display: flex;
+    gap: 1rem;
+}
+
+.temp-status span {
+    color: var(--text-light);
+}
+
+.href {
+    color: var(--hover-color);
+}
+
+.href:visited {
+    color: var(--href-visited);
+}
+
+@media (max-width: 768px) {
+    .footer {
+        flex-direction: column-reverse;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .system-info {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .temp-status {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+}

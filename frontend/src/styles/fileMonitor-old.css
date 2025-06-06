@@ -1,0 +1,648 @@
+/* Переменные */
+:root {
+  --hover-color: rgb(255, 227, 227);
+  --logo-color: rgb(212, 17, 21);
+  --main-color: rgb(29, 29, 29);
+  --text-light: rgb(255, 255, 254);
+  --text-dark: rgb(32, 32, 32);
+  --href-visited: rgb(255, 227, 227);
+  --block-color: rgb(44, 44, 44);
+  --block-color-set: rgb(45, 43, 43);
+}
+
+/* Новые стили для плиточной сетки */
+.file-actions>button {
+  padding: 0.5rem 0.75rem;
+  background: var(--logo-color);
+  border: none;
+  border-radius: 0.5rem;
+  color: var(--text-light);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  margin: 0.5em;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 1.2rem;
+  margin: 1.5rem 0;
+}
+
+.file-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--block-color-set);
+  border-radius: 0.8rem;
+  padding: 1.2rem 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  aspect-ratio: 1/1;
+  position: relative;
+  overflow: hidden;
+}
+
+.file-tile:hover {
+  background-color: var(--main-color);
+  transform: translateY(-0.25rem);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tile-icon {
+  font-size: 3rem;
+  margin-bottom: 0.8rem;
+  transition: transform 0.2s;
+}
+
+.file-tile:hover .tile-icon {
+  transform: scale(1.1);
+}
+
+.tile-name {
+  text-align: center;
+  word-break: break-word;
+  font-size: 0.9rem;
+  max-width: 100%;
+  font-weight: 500;
+}
+
+.tile-info {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Стили для контекстного меню */
+.context-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.context-menu {
+  position: absolute;
+  z-index: 1001;
+  background-color: var(--block-color);
+  border-radius: 0.8rem;
+  width: 320px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.context-header {
+  display: flex;
+  padding: 1.5rem;
+  background-color: var(--block-color-set);
+  align-items: center;
+}
+
+.context-icon {
+  margin-right: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+}
+
+.context-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+
+.context-name {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  font-size: 1.1rem;
+  word-break: break-word;
+}
+
+.context-details {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.context-actions {
+  display: flex;
+  flex-direction: column;
+  padding: 0.8rem;
+}
+
+.context-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  text-align: center;
+  border-radius: 0.4rem;
+  transition: background-color 0.2s;
+  font-size: 1rem;
+  margin: 0.2rem 0;
+}
+
+.context-action:hover {
+  background-color: var(--block-color-set);
+}
+
+.context-action.print {
+  background-color: rgba(212, 17, 21, 0.15);
+  color: var(--logo-color);
+  font-weight: 600;
+}
+
+.context-action.print:hover {
+  background-color: rgba(212, 17, 21, 0.25);
+}
+
+.context-action.delete {
+  color: var(--hover-color);
+  margin-top: 0.5rem;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .file-grid {
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .file-grid {
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .file-grid {
+    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+    gap: 1rem;
+  }
+  
+  .tile-icon {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .file-grid {
+    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+  }
+  
+  .tile-name {
+    font-size: 0.8rem;
+  }
+  
+  .context-menu {
+    width: 90%;
+    max-width: 300px;
+  }
+}
+
+/* Дополнительные стили для информации о печати */
+.print-info {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--block-color-set);
+}
+
+.print-info h4 {
+  margin: 0 0 0.8rem 0;
+  font-size: 1rem;
+  color: var(--text-light);
+  opacity: 0.9;
+}
+
+.print-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.print-detail {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 120px;
+}
+
+.print-detail.full-width {
+  flex: 0 0 100%;
+}
+
+.detail-label {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-bottom: 0.2rem;
+}
+
+.detail-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.detail-value.comment {
+  font-style: italic;
+  opacity: 0.9;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 0.3rem;
+}
+
+/* Бейдж для GCODE файлов */
+.gcode-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: var(--logo-color);
+  color: white;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.3rem;
+  transform: translate(25%, 25%);
+}
+
+.tile-icon {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Выделение выбранного файла */
+.file-tile.selected {
+  outline: 2px solid var(--logo-color);
+  box-shadow: 0 0 0 4px rgba(212, 17, 21, 0.2);
+}
+
+/* Адаптивность для контекстного меню */
+@media (max-width: 480px) {
+  .print-detail {
+    flex: 0 0 100%;
+  }
+  
+  .context-action {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Стили для кнопки обновления и навигации */
+.navigation-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.refresh-button {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: background-color 0.2s;
+}
+
+.refresh-button:hover {
+  background-color: var(--block-color-set);
+  transform: rotate(90deg);
+}
+
+/* Индикаторы загрузки и ошибок */
+.loading-indicator {
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+.error-message {
+  padding: 1.5rem;
+  background-color: rgba(212, 17, 21, 0.2);
+  border-radius: 0.5rem;
+  color: var(--text-light);
+  margin: 1rem 0;
+  border-left: 4px solid var(--logo-color);
+}
+
+/* Модальные окна действий */
+.action-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-modal {
+  background-color: var(--block-color);
+  border-radius: 0.8rem;
+  width: 90%;
+  max-width: 500px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.action-modal h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text-light);
+}
+
+.action-modal p {
+  margin-bottom: 1.5rem;
+  color: var(--text-light);
+  opacity: 0.9;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.modal-button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.modal-button.cancel {
+  background-color: var(--block-color-set);
+  color: var(--text-light);
+}
+
+.modal-button.confirm {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4CAF50;
+}
+
+.modal-button.print {
+  background-color: rgba(212, 17, 21, 0.2);
+  color: var(--logo-color);
+}
+
+.modal-button.delete {
+  background-color: rgba(212, 17, 21, 0.2);
+  color: var(--logo-color);
+}
+
+.modal-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.modal-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: var(--block-color-set);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.4rem;
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+/* Стили редактора макросов */
+.macro-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--block-color);
+  color: var(--text-light);
+  padding: 1rem;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--block-color-set);
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.save-button {
+  padding: 0.5rem 1.5rem;
+  background-color: var(--logo-color);
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.save-button:disabled {
+  background-color: rgba(212, 17, 21, 0.5);
+}
+
+.editor-info {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.editor-content {
+  flex: 1;
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--block-color-set);
+  color: var(--text-light);
+  border: none;
+  border-radius: 0.4rem;
+  font-family: monospace;
+  font-size: 0.9rem;
+  resize: none;
+  min-height: 300px;
+}
+
+@media (max-width: 768px) {
+  .action-modal {
+    width: 95%;
+    padding: 1rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-button {
+    width: 100%;
+  }
+}
+
+/* Стили для редактора файлов */
+.editor-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.editor-modal {
+  width: 90%;
+  max-width: 900px;
+  height: 80vh;
+  background-color: var(--block-color);
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.editor-header {
+  padding: 1.5rem;
+  background-color: var(--block-color-set);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.editor-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-light);
+}
+
+.editor-path {
+  flex: 1 1 100%;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  word-break: break-all;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.editor-button {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.editor-button.cancel {
+  background-color: var(--block-color-set);
+  color: var(--text-light);
+}
+
+.editor-button.save {
+  background-color: var(--logo-color);
+  color: white;
+}
+
+.editor-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.editor-button:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.editor-content {
+  flex: 1;
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--text-light);
+  border: none;
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: none;
+  min-height: 300px;
+  white-space: pre;
+  overflow: auto;
+}
+
+@media (max-width: 768px) {
+  .editor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .editor-actions {
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .editor-button {
+    flex: 1;
+  }
+}

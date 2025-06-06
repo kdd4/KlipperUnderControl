@@ -1,0 +1,186 @@
+/* Стили для модуля управления осями */
+.axis-module {
+  background-color: var(--block-color);
+  border-radius: 0.8rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.axis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  margin: 1.5rem 0;
+}
+
+.axis-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--block-color-set);
+  border-radius: 0.8rem;
+  padding: 1.2rem;
+  position: relative;
+}
+
+.axis-group::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 0.8rem 0.8rem 0 0;
+}
+
+.x-axis::before { background-color: #FF5252; }
+.y-axis::before { background-color: #4CAF50; }
+.z-axis::before { background-color: #2196F3; }
+
+.axis-label {
+  font-weight: 600;
+  margin: 0.8rem 0;
+  font-size: 1.1rem;
+}
+
+.axis-buttons {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.axis-button {
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 50%;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.axis-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.axis-button:active {
+  transform: scale(0.95);
+}
+
+.axis-button.active {
+  background-color: var(--logo-color);
+  color: white;
+  box-shadow: 0 0 0 4px rgba(212, 17, 21, 0.3);
+}
+
+.axis-button svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Стили для настроек */
+.control-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-group label {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.value-control {
+  display: flex;
+  align-items: center;
+  background-color: var(--block-color-set);
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+
+.value-control input {
+  flex: 1;
+  width: 100%;
+  padding: 0.8rem;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.value-control input::-webkit-inner-spin-button,
+.value-control input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.value-control input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.value-control button {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background-color 0.2s;
+}
+
+.value-control button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.value-control button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .axis-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .control-settings {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .axis-group {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .axis-button {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .axis-button svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+}

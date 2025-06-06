@@ -1,0 +1,48 @@
+/*Переменные*/
+:root {
+    --hover-color: rgb(255, 227, 227);
+    --logo-color: rgb(212, 17, 21);
+	  --main-color: rgb(29, 29, 29);
+	  --text-light: rgb(255, 255, 254);
+	  --text-dark: rgb(32, 32, 32);
+	  --href-visited: rgb(255, 227, 227);
+	  --block-color: rgb(44, 44, 44);
+	  --block-color-set: rgb(45, 43, 43);
+}
+
+.logo {
+    height: 3em;
+    width: 3em;
+    background-color: var(--main-color);
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    background-color: #0c0c0b;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5em, 0.7em;
+}
+
+header > nav {
+    display: flex;
+    gap: 0.5em;
+    margin-right: 1em;
+}
+
+.nav-button {
+    padding: 0.5em, 0.8em;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: var(--main-color);
+    border-radius: 0.5em;
+    transition: background-color 0.2s;
+}
+
+.nav-button:hover {
+    background-color: var(--block-color-set);
+}

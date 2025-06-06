@@ -1,0 +1,262 @@
+/*------------------------------Our_Styles---------------------------------*/
+/* styles.css */
+:root {
+  --primary: #eb1c24;
+  --dark: #1a1a1a;
+  --gray: #2d2d2d;
+  --text: #e0e0e0;
+}
+
+body {
+  margin: 0;
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Roboto Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+.dashboard {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.column {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header */
+.header {
+  background: var(--gray);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid var(--primary);
+}
+
+.logo {
+  height: 40px;
+  margin-right: 1rem;
+}
+
+.nav-button {
+  background: none;
+  border: 1px solid var(--primary);
+  color: var(--text);
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.nav-button:hover {
+  background: var(--primary);
+}
+
+/* Modules */
+.module {
+  background: var(--gray);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #373737;
+}
+
+.module-title {
+  color: var(--primary);
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+}
+
+/* Footer */
+.footer {
+  background: var(--gray);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 2px solid var(--primary);
+}
+
+.system-info {
+  display: flex;
+  gap: 2rem;
+}
+
+/* Macro Editor */
+.macro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.macro-button {
+  background: #3d3d3d;
+  border: 1px solid var(--primary);
+  padding: 1rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.settings-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--dark);
+  padding: 2rem;
+  border: 2px solid var(--primary);
+  z-index: 1000;
+}
+
+/* Axis Control */
+.axis-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.axis-group {
+  background: #252525;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.axis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.axis-actions button {
+  background: var(--dark);
+  border: 1px solid var(--primary);
+  color: var(--text);
+  padding: 0.5rem 1rem;
+  margin: 0 0.3rem;
+  min-width: 60px;
+}
+
+.control-settings {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.control-settings label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Temperature Input */
+.temp-control {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.temp-group {
+  background: #252525;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.temp-input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.temp-input-row input {
+  flex: 1;
+  background: var(--dark);
+  border: 1px solid #404040;
+  color: var(--text);
+  padding: 0.5rem;
+}
+
+/* Footer */
+.scroll-top {
+  background: var(--primary);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.scroll-top:hover {
+  transform: scale(1.1);
+}
+
+.temp-status {
+  display: flex;
+  gap: 1rem;
+}
+
+
+/*------------------------------------------------------------------------------*/
+/* FileTree.css */
+.tree-view {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.tree-item {
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: background 0.2s;
+  border-radius: 4px;
+}
+
+.tree-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tree-item .icon {
+  flex-shrink: 0;
+}
+
+.tree-item .name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-item .meta {
+  color: #666;
+  font-size: 0.9em;
+  margin-left: auto;
+  padding-left: 1rem;
+}
+
+.directory {
+  font-weight: bold;
+}

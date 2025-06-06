@@ -1,0 +1,346 @@
+/* Основной модуль температуры */
+.temperature-module {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Отображение температуры */
+.temperature-display {
+  display: flex;
+  gap: 1rem;
+  background: var(--block-color-set);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.temperature-display.error {
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+.temp-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.temp-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--block-color);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
+.temp-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.temp-label {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+.temp-values {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.temp-current {
+  color: var(--text-light);
+  transition: color 0.3s;
+}
+
+.temp-separator {
+  color: var(--text-light);
+  opacity: 0.5;
+  font-size: 1rem;
+}
+
+.temp-target {
+  color: var(--text-light);
+  opacity: 0.7;
+  font-size: 1rem;
+}
+
+/* Управление температурой */
+.temperature-control {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.temp-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.temp-control-group h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+/* Статусные сообщения */
+.status-message {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  animation: fadeIn 0.3s ease-in;
+}
+
+.status-message.success {
+  background: var(--block-color-set);
+  border: 1px solid var(--logo-color);
+}
+
+.status-message.error {
+  background: var(--block-color-set);
+  border: 1px solid var(--hover-color);
+  opacity: 0.9;
+}
+
+/* Пресеты температур */
+.temp-presets {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.preset-button {
+  padding: 0.5rem 0.75rem;
+  background: var(--block-color-set);
+  border: none;
+  border-radius: 0.5rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.preset-button:hover {
+  background: var(--hover-color);
+  color: var(--text-dark);
+}
+
+.preset-button:active {
+  transform: scale(0.95);
+}
+
+.preset-button.active {
+  background: var(--logo-color);
+  color: var(--text-light);
+}
+
+.preset-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Ввод температуры */
+.temp-input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.temp-input-row input {
+  flex: 1;
+  padding: 0.75rem;
+  background: var(--block-color-set);
+  border: 1px solid var(--block-color);
+  border-radius: 0.5rem;
+  color: var(--text-light);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.temp-input-row input:focus {
+  outline: none;
+  border-color: var(--logo-color);
+  background: var(--block-color);
+}
+
+.temp-input-row input::placeholder {
+  color: var(--text-light);
+  opacity: 0.5;
+}
+
+.temp-input-row input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.temp-unit {
+  color: var(--text-light);
+  opacity: 0.7;
+  font-size: 0.9rem;
+  margin-left: -2rem;
+  margin-right: 0.5rem;
+}
+
+/* Кнопка применения */
+.apply-button {
+  padding: 0.75rem 1.5rem;
+  background: var(--logo-color);
+  border: none;
+  border-radius: 0.5rem;
+  color: var(--text-light);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.apply-button:hover:not(:disabled) {
+  background: var(--hover-color);
+  color: var(--text-dark);
+}
+
+.apply-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.apply-button.loading {
+  opacity: 0.8;
+}
+
+/* Спиннер загрузки */
+.spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--block-color);
+  border-top: 2px solid var(--text-light);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Экстренные контролы */
+.emergency-controls {
+  display: flex;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--block-color);
+}
+
+.emergency-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--block-color-set);
+  border: 1px solid var(--hover-color);
+  border-radius: 0.5rem;
+  color: var(--text-light);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.emergency-button:hover:not(:disabled) {
+  background: var(--hover-color);
+  color: var(--text-dark);
+  border-color: var(--hover-color);
+}
+
+.emergency-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.emergency-button svg {
+  opacity: 0.8;
+}
+
+/* Анимации */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-0.5rem); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .temperature-display {
+    flex-direction: column;
+  }
+  
+  .temp-values {
+    font-size: 1.1rem;
+  }
+  
+  .temp-presets {
+    justify-content: space-between;
+  }
+  
+  .preset-button {
+    flex: 1;
+    min-width: 45px;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .status-message {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .temp-input-row {
+    flex-direction: column;
+  }
+  
+  .temp-unit {
+    display: none;
+  }
+  
+  .apply-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .emergency-button {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+  
+  .emergency-button svg {
+    width: 20px;
+    height: 20px;
+  }
+}

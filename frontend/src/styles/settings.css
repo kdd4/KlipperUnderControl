@@ -1,0 +1,106 @@
+/* Settings Module Styles */
+.settings-module {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
+  background-color: var(--block-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.settings-group {
+  background-color: var(--block-color-set);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border-left: 3px solid var(--logo-color);
+}
+
+.settings-group h4 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--hover-color);
+  font-size: 1.2rem;
+}
+
+.settings-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  gap: 0.8rem;
+}
+
+.settings-item label {
+  min-width: 200px;
+  color: var(--text-light);
+}
+
+.settings-item input[type="text"],
+.settings-item input[type="password"],
+.settings-item input[type="number"],
+.settings-item select {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--main-background-color);
+  border-radius: 0.25rem;
+  background-color: var(--block-color);
+  color: var(--text-light);
+  max-width: 300px;
+}
+
+.settings-item input:focus,
+.settings-item select:focus {
+  outline: none;
+  border-color: var(--logo-color);
+  box-shadow: 0 0 0 2px rgba(212, 17, 21, 0.2);
+}
+
+.settings-save-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--logo-color);
+  color: var(--text-light);
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  margin-top: 0.5rem;
+}
+
+.settings-save-btn:disabled {
+  background-color: #777;
+  cursor: not-allowed;
+}
+
+.settings-save-btn:hover:not(:disabled) {
+  background-color: rgba(212, 17, 21, 0.9);
+}
+
+.settings-status {
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .settings-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .settings-item label {
+    min-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .settings-item input,
+  .settings-item select {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+

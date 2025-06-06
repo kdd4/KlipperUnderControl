@@ -1,0 +1,14 @@
+{
+	"name": "Frontend",
+	"type": "module",
+	"version": "1.0.0",
+	"scripts": {
+		"start": "vite"
+	 },
+	"dependencies": {
+		"preact": "^10.25.3",
+		"preact-router": "^4.1.2",
+		"@preact/preset-vite": "^2.9.3",
+		"vite": "^6.0.4"
+	}
+}
