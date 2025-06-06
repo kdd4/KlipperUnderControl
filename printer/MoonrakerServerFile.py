@@ -86,12 +86,16 @@ async def copy(source: str, dest: str):
     )
     return response
 
-async def upload(upload_path: str, filename:str, file: BinaryIO | bytes, root: str = 'gcodes', print: bool = False):
+async def upload(upload_path: str,
+                 filename:str,
+                 file: BinaryIO | bytes,
+                 root: str = 'gcodes',
+                 print_gcode: bool = False):
     params = {
         'root': root,
         'path': upload_path,  # Папка назначения
         'checksum': 'sha256',  # Тип проверки целостности (sha256, crc32 и т.д.)
-        'print': 'true' if print else 'false'   # Автоматически запускать печать после загрузки
+        'print': 'true' if print_gcode else 'false'   # Автоматически запускать печать после загрузки
     }
     files = {'file': (filename, file)}
 
@@ -101,7 +105,7 @@ async def upload(upload_path: str, filename:str, file: BinaryIO | bytes, root: s
         files=files,
         timeout=UPLOAD_TIMEOUT
     )
-    return response
+    return response.json()
 
 async def download(filepath: str, root: str = 'gcodes'):
     response = await HTTPBridge.get(
@@ -140,7 +144,7 @@ async def TEST():
             filename='TEST1.gcode',
             file=file
         )
-        print('\nUpload file:', {'TEXT': response.text, 'RESPONSE': response})
+        print('\nUpload file:', {'JSON': response})
 
     # Download file
     result = await download('TEST1.gcode')

@@ -1,7 +1,9 @@
+from importlib.metadata import FastPath
+
 from config import *
 import fake.MoonrakerPrinter as Printer
 import fake.MoonrakerServer as Server
-import MoonrakerServerFile as Files
+import fake.MoonrakerServerFile as Files
 
 import asyncio
 import requests
@@ -37,16 +39,28 @@ async def makeRequest(method, endpoint, data):
                 case _: print(f'Error wrong endpoint: {method}/{endpoint}')
         case 'files':
             match endpoint:
-                case 'list': result = Files.list(data['root'])
-                case 'roots': result = Files.roots()
-                case 'metedata': result = Files.metadata(data['filename'])
-                case 'metescan': result = Files.metascan(data['filename'])
-
+                case 'list': result = await Files.list(data['root'])
+                case 'roots': result = await Files.roots()
+                case 'metedata': result = await Files.metadata(data['filename'])
+                case 'metescan': result = await Files.metascan(data['filename'])
+                case 'thumbnails': result = await Files.thumbnails(data['filename'])
+                case 'get_directory': result = await Files.get_directory(data['path'], data.get('extended', False))
+                case 'post_directory': result = await Files.post_directory(data['path'])
+                case 'delete_directory': result = await Files.delete_directory(data['path'], data.get('force', False))
+                case 'move': result = await Files.move(data['source'], data['dest'])
+                case 'copy': result = await Files.copy(data['source'], data['dest'])
+                case 'upload':
+                    result = await Files.upload(data['path'], data['filename'], bytes(data['file']),
+                                                data['root'], data.get('print', False))
+                case 'download':
+                    download_result = await Files.download(data['filename'], data['root'])
+                    result = {'result': download_result['TEXT']}
+                case _: print(f'Error wrong endpoint: {method}/{endpoint}')
         case _:
             print(f'Error wrong method: {method}')
     return result
 
-async def completeTask(task: dict):
+async def complete_task(task: dict):
     try:
         print(task)
         task_id = task['id']
@@ -91,7 +105,7 @@ async def main():
 
             async with asyncio.TaskGroup() as tg:
                 for task in tasks:
-                    tg.create_task(completeTask(task))
+                    tg.create_task(complete_task(task))
 
         except Exception as ex:
             print('Exception in main: ', ex)
