@@ -7,24 +7,12 @@ function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null)
     // Create task
     $stmt = $pdo->prepare("INSERT INTO PrinterTasks(endpoint, method, data, result) VALUES (:endpoint, :method, :data, '')");
 	$chk = $stmt->execute([':endpoint' => $endpoint, ':method' => $method, ':data' => $data ? json_encode($data) : 'NULL']);
-
+    
     if (!$chk) {
         throw new Exception("SQL Error: Create printer task error");
     }
 
-    $stmt = $pdo->prepare("SELECT MAX(id) as curId FROM PrinterTasks");
-    $chk = $stmt->execute();
-
-    if (!$chk) {
-        throw new Exception("SQL Error: Error getting last id");
-    }
-
-    $fetch = $stmt->fetch();
-    if (!isset($fetch['curId'])) {
-        throw new Exception("Fetch error: 'curId' not found: " . json_encode($fetch));
-    }
-
-    $id = $fetch['curId'];
+    $id = $pdo->lastInsertId();
 
     $cnt = 0;
     $cnt_limit = 5;
