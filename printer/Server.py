@@ -62,7 +62,8 @@ async def makeRequest(method, endpoint, data):
 
 async def complete_task(task: dict):
     try:
-        print(task)
+        if DEBUG_MODE:
+            print("Starting task: ", task)
         task_id = task['id']
         endpoint = task['endpoint']
         method = task['method']
@@ -83,12 +84,13 @@ async def complete_task(task: dict):
         )
 
         if post_task.status_code != 200:
-            print(f"Error post task: id: {id}, code: {post_task.status_code}, text: {post_task.text}")
+            print(f"Error post task: id: {task_id}, code: {post_task.status_code}, text: {post_task.text}")
         else:
-            print(f'Complete id: {id}, result: {result_json}\n')
-    except Exception as ex:
-        print('Exception in completeTask: ', ex)
-
+            print(f'Complete id: {task_id}, result: {result_json}\n')
+    except Exception as exc:
+        if DEBUG_MODE:
+            raise RuntimeError('complete_task error') from exc
+        print('Exception in complete_task:', exc)
 
 async def main():
     while True:
@@ -98,17 +100,24 @@ async def main():
                 url="http://localhost:8088/api/printer.php"
             )
 
-            tasks = response.json()
+            response_json = response.json()
 
             if response.status_code != 200:
-                print('Bad response: ', tasks)
+                print(f'Bad response status code: {response.status_code}, response: {response_json}')
+                continue
+
+            if not response_json['success']:
+                print('Not success: ', response_json)
+                continue
 
             async with asyncio.TaskGroup() as tg:
-                for task in tasks:
+                for task in response_json['result']:
                     tg.create_task(complete_task(task))
 
-        except Exception as ex:
-            print('Exception in main: ', ex)
+        except Exception as exc:
+            if DEBUG_MODE:
+                raise RuntimeError('complete_task error') from exc
+            print('Exception in main: ', exc)
 
 
 if __name__ == '__main__':
