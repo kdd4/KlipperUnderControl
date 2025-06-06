@@ -1,5 +1,3 @@
-from importlib.metadata import FastPath
-
 from config import *
 import fake.MoonrakerPrinter as Printer
 import fake.MoonrakerServer as Server
