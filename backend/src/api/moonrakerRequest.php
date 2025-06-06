@@ -27,29 +27,33 @@ function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null)
     $id = $fetch['curId'];
 
     $cnt = 0;
+    $cnt_limit = 5;
 
-    while ($cnt < 5) {
+    while ($cnt < $cnt_limit) {
         sleep(1);
-        $stmt = $pdo->prepare("SELECT result FROM PrinterTasks WHERE id=:id");
+        $stmt = $pdo->prepare("SELECT ready FROM PrinterTasks WHERE id=:id");
         $stmt->execute([':id' => $id]);
         $fetch = $stmt->fetch();
 
-        if (!isset($fetch['result'])) {
-            throw new Exception("Fetch error: 'result' not found: " . json_encode($fetch));
+        if (!isset($fetch['ready'])) {
+            throw new Exception("Fetch error: 'ready' not found: " . json_encode($fetch));
         }
 
-        $result = $fetch['result'];
+        $result = $fetch['ready'];
         
-        if ($result != '') {
+        if ($result) {
             break;
         }
 
         $cnt++;
     }
 
-    if ($cnt == 5) {
-        $stmt = $pdo->prepare("UPDATE PrinterTasks SET result='TL', error='Time limit' WHERE id=:id");
-        $stmt->execute([':id' => $id]);
+    if ($cnt == $cnt_limit) {
+        $stmt = $pdo->prepare("UPDATE PrinterTasks SET result='TL', error='Time limit', ready=True WHERE id=:id");
+        $chk = $stmt->execute([':id' => $id]);
+        if (!$chk) {
+            throw new Exception("SQL Error: Error updating task (TL)");
+        }
     }
     
     $stmt = $pdo->prepare("SELECT error, httpCode, result FROM PrinterTasks WHERE id=:id");
@@ -65,6 +69,12 @@ function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null)
     
     if ($httpCode != 200) {
         throw new Exception("HTTP error code: " . $httpCode);
+    }
+
+    $stmt = $pdo->prepare("UPDATE PrinterTasks SET actual=False WHERE id=:id");
+    $chk = $stmt->execute([':id' => $id]);
+    if (!$chk) {
+         throw new Exception("SQL Error: Error updating task (setting actual to false)");
     }
     
     return json_decode($result, true);

@@ -11,7 +11,6 @@ try {
 	$pdo->exec("
 		CREATE TABLE IF NOT EXISTS PrinterTasks (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			printerId ...
 			endpoint TEXT NOT NULL,
 			method TEXT NOT NULL,
             data TEXT,

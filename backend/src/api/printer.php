@@ -14,15 +14,18 @@ try {
 
 	switch ($method) {
 		case 'GET':
-			$stmt = $pdo->query("SELECT * FROM PrinterTasks WHERE result=''");
+			$stmt = $pdo->query("SELECT * FROM PrinterTasks WHERE ready=False");
 			$tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
-			echo json_encode($tasks);
+			echo json_encode([
+					'success' => true,
+					'result' => $tasks
+			]);
 			break;
 			
-		case 'POST':
+		case 'PUT':
 			$data = json_decode(file_get_contents('php://input'), true);
 			if (isset($data['result']) and isset($data['httpCode']) and isset($data['error']) and isset($data['id'])) {
-				$stmt = $pdo->prepare("UPDATE PrinterTasks SET result=:result, httpCode=:httpCode, error=:error WHERE id=:id");
+				$stmt = $pdo->prepare("UPDATE PrinterTasks SET result=:result, httpCode=:httpCode, error=:error, ready=true WHERE id=:id");
 				$chk = $stmt->execute([
 					':id' => $data['id'],
 					':result' =>  json_encode($data['result']),
