@@ -92,8 +92,8 @@ async def complete_task(task: dict):
 
 async def main():
     while True:
-        time.sleep(0.5)
         try:
+            time.sleep(0.5)
             response = requests.get(
                 url="http://localhost:8088/api/printer.php"
             )
@@ -108,8 +108,10 @@ async def main():
                 print('Not success: ', response_json)
                 continue
 
+            tasks = response_json['result']
+
             async with asyncio.TaskGroup() as tg:
-                for task in response_json['result']:
+                for task in tasks:
                     tg.create_task(complete_task(task))
 
         except Exception as exc:

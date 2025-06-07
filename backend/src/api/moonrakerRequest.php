@@ -59,10 +59,10 @@ function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null)
         throw new Exception("HTTP error code: " . $httpCode);
     }
 
-    $stmt = $pdo->prepare("UPDATE PrinterTasks SET actual=False WHERE id=:id");
+    $stmt = $pdo->prepare("DELETE FROM PrinterTasks WHERE id=:id");
     $chk = $stmt->execute([':id' => $id]);
     if (!$chk) {
-         throw new Exception("SQL Error: Error updating task (setting actual to false)");
+         throw new Exception("SQL Error: Error deleting task");
     }
     
     return json_decode($result, true);

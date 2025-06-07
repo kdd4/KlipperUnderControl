@@ -17,7 +17,6 @@ try {
 			result TEXT,
             error TEXT,
             httpCode INTEGER,
-            actual BOOLEAN DEFAULT TRUE,
 			ready BOOLEAN DEFAULT FALSE,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)
