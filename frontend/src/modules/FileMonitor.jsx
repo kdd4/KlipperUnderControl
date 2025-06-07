@@ -1,7 +1,57 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 
-// Заглушка для API Moonraker
+import { API } from '../config';
+
+import { apiGet, apiPost, apiPut, apiDelete } from '../api';
+
 const moonrakerAPI = {
+  listDirectory: async (path='/prints') => {
+    return await apiGet('/api/files.php', { path });
+  },
+  uploadFile: async (file, dirPath='/prints') => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const resp = await fetch(API + '/api/files.php?path=' + encodeURIComponent(dirPath), {
+      method: 'POST',
+      credentials: 'include',
+      body: formData
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    return await resp.json();
+  },
+  getFileContent: async (path) => {
+    return await apiGet('/api/files.php', { action: 'content', path });
+  },
+  saveFileContent: async (path, content) => {
+    return await apiPut('/api/files.php?path=' + encodeURIComponent(path), { content });
+  },
+  deleteFile: async (path) => {
+    return await apiDelete('/api/files.php', { path });
+  },
+  // directory functions
+  createDirectory: async (path, name) => {
+    return await apiPost('/api/files.php?path=' + encodeURIComponent(path), { type: 'dir', name });
+  },
+  deleteDirectory: async (path) => {
+    return await apiDelete('/api/files.php', { path });
+  },
+  renameDirectory: async (path, newName) => {
+    return { success:false };
+  },
+  renameFile: async (path, newPath) => {
+    return { success:false };
+  },
+  updateFileComment: async (path, comment) => {
+    // Not implemented server side
+    return { success:false };
+  },
+  printFile: async (path) => {
+    return { success:false };
+  }
+};
+
+// Заглушка для API Moonraker
+const oldMoonrakerAPI = {
   // Структура файловой системы
     fileSystem: {
     '/prints': {
@@ -158,7 +208,7 @@ M117 Printing Part 1...`
 
   // Исправленный метод создания директории
     async createDirectory(path, name) {
-      console.log(`Creating directory: ${name} in ${path}`);
+
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           // Находим текущую директорию
@@ -225,7 +275,7 @@ M117 Printing Part 1...`
 
   // Исправленный метод удаления директории
     async deleteDirectory(path) {
-      console.log(`Deleting directory: ${path}`);
+
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           // Защита от удаления корневой директории
@@ -272,7 +322,7 @@ M117 Printing Part 1...`
 
   // Исправленный метод переименования директории
     async renameDirectory(oldPath, newName) {
-      console.log(`Renaming directory: ${oldPath} to ${newName}`);
+
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           const parts = oldPath.split('/').filter(p => p);
@@ -314,7 +364,7 @@ M117 Printing Part 1...`
 
   // Получить содержимое директории
   async listDirectory(path) {
-    console.log(`Fetching directory: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         // Если это корневой путь или /prints
@@ -376,7 +426,7 @@ M117 Printing Part 1...`
 
   // Получить содержимое файла
   async getFileContent(path) {
-    console.log(`Fetching content: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         const content = this.fileContents[path];
@@ -394,7 +444,7 @@ M117 Printing Part 1...`
 
   // Сохранить содержимое файла
   async saveFileContent(path, content) {
-    console.log(`Saving file: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         this.fileContents[path] = content;
@@ -405,7 +455,7 @@ M117 Printing Part 1...`
 
   // Удалить файл
   async deleteFile(path) {
-    console.log(`Deleting file: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         // Удаляем содержимое файла
@@ -424,7 +474,7 @@ M117 Printing Part 1...`
 
   // Переименовать файл
   async renameFile(oldPath, newPath) {
-    console.log(`Renaming: ${oldPath} -> ${newPath}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         // Переносим содержимое
@@ -448,7 +498,7 @@ M117 Printing Part 1...`
 
   // Обновить комментарий файла
   async updateFileComment(path, comment) {
-    console.log(`Updating comment for: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         const parts = path.split('/').filter(p => p);
@@ -463,7 +513,7 @@ M117 Printing Part 1...`
 
   // Загрузить файл
   async uploadFile(file, currentPath) {
-    console.log(`Uploading file: ${file.name} to ${currentPath}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         const newFile = {
@@ -541,7 +591,7 @@ M117 Printing Part 1...`
   },
 
   async printFile(path) {
-    console.log(`Printing: ${path}`);
+
     return new Promise(resolve => setTimeout(resolve, 300));
   }
 };
@@ -1330,7 +1380,7 @@ function FileGrid({
     const fileName = e.dataTransfer.getData('fileName');
     if (fileName && targetDir.isDir) {
       // Здесь будет логика перемещения файла в директорию
-      console.log(`Moving ${fileName} to ${targetDir.name}`);
+
       // В реальном приложении вызываем API для перемещения
     }
   };

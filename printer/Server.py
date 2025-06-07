@@ -8,7 +8,7 @@ import requests
 import time
 import json
 
-async def makeRequest(method, endpoint, data):
+async def make_request(method, endpoint, data):
     result = None
     match method:
         case 'printer':
@@ -67,7 +67,7 @@ async def complete_task(task: dict):
         method = task['method']
         data = json.loads(task['data']) if task['data'] != 'NULL' else None
 
-        result_json = await makeRequest(method, endpoint, data)
+        result_json = await make_request(method, endpoint, data)
         status_code = 200 if result_json is not None else 400
 
         post_task = requests.put(

@@ -1,15 +1,25 @@
-import { useState } from 'preact/hooks';
+import { useState, useRef, useEffect } from 'preact/hooks';
+import { apiPost } from '../api';
 
 export function AxisControl() {
   const [step, setStep] = useState(10);
   const [speed, setSpeed] = useState(100);
   const [activeAxis, setActiveAxis] = useState(null);
+  const timerRef = useRef(null);
 
-  const handleMove = (axis, direction) => {
-    console.log(`Moving ${axis}${direction}${step} at ${speed}mm/s`);
+  
+const handleMove = async (axis, direction) => {
     setActiveAxis(`${axis}${direction}`);
-    setTimeout(() => setActiveAxis(null), 300);
-  };
+    try {
+        const dist = step * (direction === '+' ? 1 : -1);
+        await apiPost('/api/move.php', { axis, distance: dist, speed });
+    } catch (e) {
+        console.error(e);
+    } finally {
+        setTimeout(() => setActiveAxis(null), 300);
+    }
+};
+
 
   const increment = (type, value) => {
     if (type === 'step') {

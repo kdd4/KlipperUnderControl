@@ -1,7 +1,49 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 
-// API для работы с макросами (аналогично moonrakerAPI)
+
+import { apiGet, apiPost, apiPut, apiDelete } from '../api';
+
 const macrosAPI = {
+  listDirectory: async (path='/macros') => {
+    return await apiGet('/api/macros.php', { path });
+  },
+  getMacroContent: async (path) => {
+    const data = await apiGet('/api/macros.php', { action: 'content', path });
+    return data.content;
+  },
+  saveMacroContent: async (path, content) => {
+    return await apiPut('/api/macros.php?path=' + encodeURIComponent(path), { content });
+  },
+  executeMacro: async (path) => {
+    // Not implemented: optionally call Moonraker. Here we just return success.
+    return { success: true };
+  },
+  createMacro: async (dirPath, name, icon, description) => {
+    return await apiPost('/api/macros.php?path=' + encodeURIComponent(dirPath), { type: 'file', name, content: `; ${description}\n` });
+  },
+  createDirectory: async (dirPath, name) => {
+    return await apiPost('/api/macros.php?path=' + encodeURIComponent(dirPath), { type: 'dir', name });
+  },
+  deleteMacro: async (path) => {
+    return await apiDelete('/api/macros.php', { path });
+  },
+  deleteDirectory: async (path) => {
+    return await apiDelete('/api/macros.php', { path });
+  },
+  renameMacro: async (oldPath, newPath) => {
+    // Not implemented; you can do copy+delete or handle server-side
+    return { success: false, error: 'rename not implemented'};
+  },
+  renameDirectory: async (path, newName) => {
+    return { success: false, error: 'rename not implemented'};
+  },
+  updateMacroMetadata: async (path, metadata) => {
+    return { success: false, error: 'metadata not implemented'};
+  }
+};
+
+// API для работы с макросами (аналогично moonrakerAPI)
+const oldMacrosAPI = {
   // Структура файловой системы макросов
   fileSystem: {
     '/macros': {
@@ -292,7 +334,7 @@ gcode:
 
   // Создание директории
   async createDirectory(path, name) {
-    console.log(`Creating directory: ${name} in ${path}`);
+
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (path === '/macros') {
@@ -355,7 +397,7 @@ gcode:
 
   // Создание нового макроса
   async createMacro(path, name, icon = '⚡', description = '') {
-    console.log(`Creating macro: ${name} in ${path}`);
+
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const fileName = name.endsWith('.gcode') ? name : `${name}.gcode`;
@@ -414,7 +456,7 @@ gcode:
 
   // Удаление директории
   async deleteDirectory(path) {
-    console.log(`Deleting directory: ${path}`);
+
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (path === '/macros' || path === '/') {
@@ -456,7 +498,7 @@ gcode:
 
   // Переименование директории
   async renameDirectory(oldPath, newName) {
-    console.log(`Renaming directory: ${oldPath} to ${newName}`);
+
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const parts = oldPath.split('/').filter(p => p);
@@ -496,7 +538,7 @@ gcode:
 
   // Получить содержимое директории
   async listDirectory(path) {
-    console.log(`Fetching directory: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         if (path === '/' || path === '/macros') {
@@ -536,7 +578,7 @@ gcode:
 
   // Получить содержимое макроса
   async getMacroContent(path) {
-    console.log(`Fetching macro content: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         const content = this.macroContents[path];
@@ -559,7 +601,7 @@ gcode:
 
   // Сохранить содержимое макроса
   async saveMacroContent(path, content) {
-    console.log(`Saving macro: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         this.macroContents[path] = content;
@@ -593,7 +635,7 @@ gcode:
 
   // Удалить макрос
   async deleteMacro(path) {
-    console.log(`Deleting macro: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         delete this.macroContents[path];
@@ -610,7 +652,7 @@ gcode:
 
   // Переименовать макрос
   async renameMacro(oldPath, newPath) {
-    console.log(`Renaming: ${oldPath} -> ${newPath}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         if (this.macroContents[oldPath]) {
@@ -632,7 +674,7 @@ gcode:
 
   // Обновить метаданные макроса
   async updateMacroMetadata(path, metadata) {
-    console.log(`Updating metadata for: ${path}`);
+
     return new Promise(resolve => {
       setTimeout(() => {
         const parts = path.split('/').filter(p => p);
@@ -647,7 +689,7 @@ gcode:
 
   // Выполнить макрос
   async executeMacro(path) {
-    console.log(`Executing macro: ${path}`);
+
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const content = this.macroContents[path];
