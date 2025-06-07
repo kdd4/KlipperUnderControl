@@ -12,6 +12,7 @@
   background: var(--block-color-set);
   padding: 1rem;
   border-radius: 0.5rem;
+  flex-direction: column;  
 }
 
 .temperature-display.error {
@@ -296,7 +297,7 @@
 /* Адаптивность */
 @media (max-width: 768px) {
   .temperature-display {
-    flex-direction: column;
+    flex-direction: row;
   }
   
   .temp-values {
