@@ -29,8 +29,8 @@ export function TemperatureControl() {
     setIsLoading(prev => ({ ...prev, [type]: true }));
     
     try {
-      const response = await fetch(API + '/api/set-temperature.php', {
-        method: 'POST',
+      const response = await fetch(API + '/api/temperature.php', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },

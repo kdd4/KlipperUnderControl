@@ -11,7 +11,7 @@ export function TemperatureDisplay() {
   useEffect(() => {
     const fetchTemperatures = async () => {
       try {
-        const response = await fetch(API+'/api/temperature.php');
+        const response = await fetch(API + '/api/temperature.php');
         if (!response.ok) {
           throw new Error('Failed to fetch temperatures');
         }
