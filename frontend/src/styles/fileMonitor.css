@@ -199,22 +199,22 @@
 /* Адаптивность */
 @media (max-width: 1200px) {
   .file-grid {
-    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   }
 }
 
 @media (max-width: 992px) {
   .file-grid {
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   }
 }
 
 @media (max-width: 768px) {
   .file-tile {
-    margin-bottom: 1.5em;
+    margin-bottom: 0.5em;
   }
   .file-grid {
-    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
     gap: 1rem;
   }
   
@@ -225,10 +225,10 @@
 
 @media (max-width: 480px) {
   .file-tile {
-    margin-bottom: 2.5em;
+    margin-bottom: 0.25em;
   }
   .file-grid {
-    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   }
   
   .tile-name {
@@ -472,6 +472,7 @@
   border-radius: 0.4rem;
   color: var(--text-light);
   font-size: 1rem;
+  max-width: 95%;
 }
 
 /* Стили редактора макросов */
@@ -862,10 +863,16 @@
   opacity: 0.8;
 }
 
-/* Адаптация плиток под комментарии */
+/* Адаптация плиток под комментарии /
 .file-tile {
   height: auto;
   min-height: 10rem;
+  padding: 1rem 0.5rem;
+  min-width: 10em;
+}/**/
+
+.file-tile {
+  min-width: 10em;
   padding: 1rem 0.5rem;
 }
 
@@ -915,7 +922,7 @@
 /* Индикатор количества файлов в директории */
 .file-tile.dir .tile-info {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   width: 100%;
   padding: 0 0.5rem;
@@ -925,6 +932,12 @@
 .module-title {
   word-break: break-all;
   font-size: 1.1rem;
+}
+
+@media (max-width: 900px) {
+  .file-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* Улучшенная адаптивность для длинных путей */
