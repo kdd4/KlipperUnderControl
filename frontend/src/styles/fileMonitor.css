@@ -31,6 +31,13 @@
   grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   gap: 1.2rem;
   margin: 1.5rem 0;
+  min-height: 0; /* Важно для корректного сжатия */
+}
+
+.file-grid-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto; /* Добавляем вертикальную прокрутку */
 }
 
 .file-tile {
@@ -40,12 +47,13 @@
   justify-content: center;
   background-color: var(--block-color-set);
   border-radius: 0.8rem;
-  padding: 1.2rem 0.8rem;
+  /*padding: 1.2rem 0.8rem;*/
   cursor: pointer;
   transition: all 0.2s ease;
   aspect-ratio: 1/1;
   position: relative;
   overflow: hidden;
+  height: fit-content;
 }
 
 .file-tile:hover {
@@ -76,6 +84,7 @@
   font-size: 0.7rem;
   opacity: 0.7;
   margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
   text-align: center;
 }
 
@@ -183,6 +192,10 @@
   margin-top: 0.5rem;
 }
 
+.file-info {
+  margin-bottom: 0;
+}
+
 /* Адаптивность */
 @media (max-width: 1200px) {
   .file-grid {
@@ -197,6 +210,9 @@
 }
 
 @media (max-width: 768px) {
+  .file-tile {
+    margin-bottom: 1.5em;
+  }
   .file-grid {
     grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
     gap: 1rem;
@@ -208,6 +224,9 @@
 }
 
 @media (max-width: 480px) {
+  .file-tile {
+    margin-bottom: 2.5em;
+  }
   .file-grid {
     grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
   }
@@ -718,4 +737,501 @@
   border-radius: 0.4rem;
   color: var(--text-light);
   font-size: 1rem;
+}
+
+/* Стили для кнопки загрузки */
+.upload-button {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: all 0.2s;
+}
+
+.upload-button:hover {
+  background-color: var(--block-color-set);
+  transform: scale(1.1);
+}
+
+/* Стили для комментариев в плитках */
+.tile-comment-section {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.tile-comment {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  min-height: 2rem;
+}
+
+.tile-comment:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.comment-content {
+  flex: 1;
+  font-size: 0.75rem;
+  opacity: 0.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.tile-comment.expanded .comment-content {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.comment-edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  padding: 0.2rem;
+}
+
+.comment-edit-btn:hover {
+  opacity: 1;
+}
+
+/* Форма редактирования комментария */
+.comment-edit-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.comment-edit-input {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--block-color);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.3rem;
+  color: var(--text-light);
+  font-size: 0.75rem;
+  resize: none;
+  font-family: inherit;
+}
+
+.comment-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.comment-btn {
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.comment-btn.save {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4CAF50;
+}
+
+.comment-btn.cancel {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+}
+
+.comment-btn:hover {
+  opacity: 0.8;
+}
+
+/* Адаптация плиток под комментарии */
+.file-tile {
+  height: auto;
+  min-height: 10rem;
+  padding: 1rem 0.5rem;
+}
+
+.file-tile.dir {
+  min-height: auto;
+  aspect-ratio: 1/1;
+}
+
+/* Стили для информации о директориях */
+.tile-info .dir-info {
+  color: var(--text-light);
+  opacity: 0.8;
+  font-size: 0.8rem;
+}
+
+.tile-info .dir-modified {
+  margin-left: 0.5rem;
+}
+
+/* Стили для пустых комментариев */
+.tile-comment.no-comment .comment-content {
+  font-style: italic;
+  opacity: 0.5;
+}
+
+/* Улучшенные стили для редактирования комментариев */
+.comment-edit-form {
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.comment-edit-input:focus {
+  outline: 1px solid var(--logo-color);
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Индикатор количества файлов в директории */
+.file-tile.dir .tile-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 0.5rem;
+}
+
+/* Стили для навигационной панели */
+.module-title {
+  word-break: break-all;
+  font-size: 1.1rem;
+}
+
+/* Улучшенная адаптивность для длинных путей */
+@media (max-width: 768px) {
+  .module-title {
+    font-size: 0.9rem;
+  }
+  
+  .editor-path {
+    font-size: 0.75rem;
+  }
+}
+
+/* Анимация для кнопок */
+.navigation-controls button {
+  position: relative;
+  overflow: hidden;
+}
+
+.navigation-controls button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.navigation-controls button:active::after {
+  width: 100%;
+  height: 100%;
+}
+
+/* Улучшенные стили для загрузки файлов */
+.upload-button {
+  position: relative;
+}
+
+.upload-button:active {
+  transform: scale(0.95);
+}
+
+/* Индикатор выбранного файла */
+.file-tile.selected::before {
+  content: '✓';
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: var(--logo-color);
+  color: white;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  z-index: 1;
+}
+
+/* Плавные переходы для плиток */
+.file-tile {
+  transition: all 0.3s ease;
+}
+
+.file-tile:hover {
+  transform: translateY(-0.25rem) scale(1.02);
+}
+
+/* Улучшенная типографика */
+.tile-name {
+  line-height: 1.2;
+  margin-bottom: 0.3rem;
+}
+
+.tile-info {
+  line-height: 1.4;
+}
+
+/* Стили для пустой директории */
+.file-grid:empty::after {
+  content: 'Папка пуста';
+  display: block;
+  text-align: center;
+  padding: 3rem;
+  opacity: 0.5;
+  font-style: italic;
+}
+
+/* Стили для кнопки создания директории */
+.create-dir-button {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.create-dir-button:hover {
+  background-color: var(--block-color-set);
+  transform: scale(1.1);
+}
+
+/* Стили для пустой директории с кнопкой */
+.empty-directory {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--text-light);
+  opacity: 0.5;
+  gap: 1rem;
+}
+
+.create-first-item {
+  margin-top: 1rem;
+  padding: 0.7rem 1.5rem;
+  background-color: var(--logo-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  opacity: 0.8;
+}
+
+.create-first-item:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.file-tile.dir:hover .dir-indicator {
+  transform: translateX(3px);
+}
+
+/* Стили для drag & drop */
+.file-tile.dragged-over {
+  background-color: rgba(212, 17, 21, 0.2);
+  border: 2px dashed var(--logo-color);
+  transform: scale(1.05);
+}
+
+.file-tile[draggable="true"] {
+  cursor: move;
+}
+
+.file-tile[draggable="true"]:active {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+/* Предупреждающий текст */
+.warning-text {
+  color: #ff9800;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: rgba(255, 152, 0, 0.1);
+  border-radius: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Стили для директорий в контекстном меню */
+.context-menu .dir-actions {
+  border-top: 1px solid var(--block-color-set);
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Анимация для создания/удаления */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.file-tile {
+  animation: fadeInScale 0.3s ease-out;
+}
+
+/* Улучшенные стили для модальных окон с формами */
+.form-group input {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: var(--block-color-set);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.4rem;
+  color: var(--text-light);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--logo-color);
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .navigation-controls {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  
+  .create-dir-button {
+    font-size: 1rem;
+  }
+}
+
+/* Визуальное различие между файлами и папками */
+.file-tile.dir {
+  background: linear-gradient(135deg, var(--block-color-set) 0%, rgba(212, 17, 21, 0.05) 100%);
+}
+
+.file-tile.dir:hover {
+  background: linear-gradient(135deg, var(--main-color) 0%, rgba(212, 17, 21, 0.1) 100%);
+}
+
+/* Счетчик файлов в директории */
+.dir-file-count {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  background-color: var(--logo-color);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 1rem;
+  font-weight: 600;
+}
+
+/* Стили для создания директории */
+.create-dir-button {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+}
+
+.create-dir-button:hover {
+  background-color: var(--block-color-set);
+  transform: scale(1.1);
+}
+
+/* Убираем стили для треугольника если он не нужен */
+/*
+.dir-indicator {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  transition: transform 0.2s;
+}
+*/
+
+/* Визуальное различие между файлами и папками */
+.file-tile.dir {
+  background: linear-gradient(135deg, var(--block-color-set) 0%, rgba(212, 17, 21, 0.05) 100%);
+}
+
+.file-tile.dir:hover {
+  background: linear-gradient(135deg, var(--main-color) 0%, rgba(212, 17, 21, 0.1) 100%);
+}
+
+/* Предупреждающий текст */
+.warning-text {
+  color: #ff9800;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: rgba(255, 152, 0, 0.1);
+  border-radius: 0.3rem;
 }

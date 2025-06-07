@@ -31,6 +31,13 @@
   grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   gap: 1.2rem;
   margin: 1.5rem 0;
+  min-height: 0; /* Важно для корректного сжатия */
+}
+
+.file-grid-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto; /* Добавляем вертикальную прокрутку */
 }
 
 .file-tile {
@@ -40,12 +47,13 @@
   justify-content: center;
   background-color: var(--block-color-set);
   border-radius: 0.8rem;
-  padding: 1.2rem 0.8rem;
+  /*padding: 1.2rem 0.8rem;*/
   cursor: pointer;
   transition: all 0.2s ease;
   aspect-ratio: 1/1;
   position: relative;
   overflow: hidden;
+  height: fit-content;
 }
 
 .file-tile:hover {
@@ -76,6 +84,7 @@
   font-size: 0.7rem;
   opacity: 0.7;
   margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
   text-align: center;
 }
 
@@ -183,6 +192,10 @@
   margin-top: 0.5rem;
 }
 
+.file-info {
+  margin-bottom: 0;
+}
+
 /* Адаптивность */
 @media (max-width: 1200px) {
   .file-grid {
@@ -197,6 +210,9 @@
 }
 
 @media (max-width: 768px) {
+  .file-tile {
+    margin-bottom: 1.5em;
+  }
   .file-grid {
     grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
     gap: 1rem;
@@ -208,6 +224,9 @@
 }
 
 @media (max-width: 480px) {
+  .file-tile {
+    margin-bottom: 2.5em;
+  }
   .file-grid {
     grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
   }
@@ -435,6 +454,8 @@
 
 .form-group {
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
@@ -445,7 +466,6 @@
 }
 
 .form-group input {
-  width: 100%;
   padding: 0.8rem;
   background-color: var(--block-color-set);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -645,4 +665,76 @@
   .editor-button {
     flex: 1;
   }
+}
+
+/* Стили для drag and drop */
+.file-grid.dragging-active {
+  position: relative;
+}
+
+.file-grid.dragging-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(212, 17, 21, 0.1);
+  border: 2px dashed var(--logo-color);
+  border-radius: 0.8rem;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.file-tile[draggable="true"] {
+  cursor: grab;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.file-tile:active[draggable="true"] {
+  cursor: grabbing;
+}
+
+.file-tile.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.drop-indicator {
+  background-color: rgba(212, 17, 21, 0.2) !important;
+  border: 2px dashed var(--logo-color) !important;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { background-color: rgba(212, 17, 21, 0.2); }
+  50% { background-color: rgba(212, 17, 21, 0.4); }
+  100% { background-color: rgba(212, 17, 21, 0.2); }
+}
+
+.file-tile.drop-target {
+  outline: 3px solid var(--logo-color);
+  box-shadow: 0 0 0 6px rgba(212, 17, 21, 0.2);
+}
+
+/* Стили для модального окна создания папки */
+.action-modal .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.action-modal .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
+.action-modal .form-group input {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: var(--block-color-set);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.4rem;
+  color: var(--text-light);
+  font-size: 1rem;
 }

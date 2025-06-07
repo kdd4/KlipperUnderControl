@@ -11,7 +11,7 @@ export function TemperatureDisplay() {
   useEffect(() => {
     const fetchTemperatures = async () => {
       try {
-        const response = await fetch(API + '/api/temperature.php');
+        const response = await fetch(API+'/api/temperature.php');
         if (!response.ok) {
           throw new Error('Failed to fetch temperatures');
         }
@@ -48,9 +48,10 @@ export function TemperatureDisplay() {
   }, []);
 
   const getTemperatureColor = (current, target) => {
-    const diff = Math.abs(current - target);
+    const diff = (current - target);
     if (diff < 2) return 'var(--logo-color)';
     if (diff < 10) return 'orange';
+    if (diff > 10) return 'rgb(182 0 196)';
     return 'var(--text-light)';
   };
 

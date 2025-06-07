@@ -58,6 +58,13 @@ html {
   margin-bottom: 0;
 }
 
+.module {
+  flex: 1;
+  min-height: 0; /* Разрешает сжатие внутреннего контента. Не убирай, иначе файлы поломаются! */
+  display: flex;
+  flex-direction: column;
+}
+
 @media (max-width: 768px) {
   .content {
     padding: 1rem;
@@ -70,6 +77,7 @@ html {
   
   .column {
     padding: 1rem;
+    min-height: fit-content;
   }
 }
 
@@ -84,12 +92,14 @@ html {
 }
 
 .auth-card {
-  background-color: var(--block-color);
+  background-color: var(--main-color);
   border-radius: 0.625rem;
   box-shadow: 0 0.3125rem 1.5625rem rgba(0, 0, 0, 0.5);
   width: 100%;
   max-width: 25rem; /* 400px */
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .auth-header {
@@ -106,9 +116,11 @@ html {
 }
 
 .auth-logo {
-  width: 3.75rem; /* 60px */
-  height: 3.75rem; /* 60px */
+  width: 11.75rem; /* 60px */
+  height: 11.75rem; /* 60px */
   margin: 1rem auto;
+  border-radius: 1em;
+  background-color: var(--main-color);
 }
 
 .auth-form {
