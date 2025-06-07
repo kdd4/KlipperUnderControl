@@ -28,8 +28,8 @@ const AuthScreen = ({ onAuthenticate }) => {
       <div className="auth-card">
         <div className="auth-header">
           <h2>Авторизация</h2>
-          <div className="auth-logo" style="background-image: '../src/assets/logo/BasicLogo.png'"/>
         </div>
+        <img className="auth-logo" src="../src/assets/logo/BasicLogo.png"/>
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="input-group">
@@ -86,12 +86,10 @@ const Dashboard = () => (
     <div className="column" style="min-width:60%;">
       <FileMonitor />
     </div>
-    <div className="column" style="min-width:20%;">
+    <div className="column" style="min-width:25%;">
       <TemperatureModule />
     </div>
-    <div className="column">
-      <MacroEditor />
-    </div>
+    <MacroEditor />
   </div>
 );
 

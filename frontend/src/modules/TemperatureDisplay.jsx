@@ -48,9 +48,10 @@ export function TemperatureDisplay() {
   }, []);
 
   const getTemperatureColor = (current, target) => {
-    const diff = Math.abs(current - target);
+    const diff = (current - target);
     if (diff < 2) return 'var(--logo-color)';
     if (diff < 10) return 'orange';
+    if (diff > 10) return 'rgb(182 0 196)';
     return 'var(--text-light)';
   };
 
