@@ -15,11 +15,14 @@ try {
 
 	switch ($method) {	
 		case 'POST':
-			$data = jsonInput();
+			$data = json_decode(file_get_contents('php://input'), true);;
 			$refresh = $data['refresh_token'] ?? '';
 
             consumeRefresh($refresh);
-			jsonResponse(['status' => 'logged_out']);
+			jsonResponse([
+				'success' => true,
+				'status' => 'logged_out'
+			]);
 			break;
 			
 		default:

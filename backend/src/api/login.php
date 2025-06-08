@@ -15,19 +15,23 @@ try {
 
 	switch ($method) {	
 		case 'POST':
-			$data = jsonInput();
+			$data = json_decode(file_get_contents('php://input'), true);
 			$login = $data['login'] ?? '';
             $password = $data['password'] ?? '';
             $user = getUserByLogin($login);
             if (!$user || !password_verify($password, $user['password_hash'])) {
-                jsonResponse(['error' => 'Invalid credentials'], 401);
+                jsonResponse([
+					'success' => false,
+					'error' => 'Invalid credentials'
+				], 401);
             }
             $access  = makeJwt($user['id']);
             $refresh = bin2hex(random_bytes(32));
             storeRefresh($user['id'], $refresh, now() + REFRESH_LIFETIME);
             jsonResponse([
+				'success' => true,
                 'access_token'  => $access,
-                'expires_in'    => ACCESS_LIFETIME,
+                'expires_at'    => now() + ACCESS_LIFETIME,
                 'refresh_token' => $refresh
             ]);
 			break;

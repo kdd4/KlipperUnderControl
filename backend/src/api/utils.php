@@ -1,7 +1,4 @@
 <?php
-function jsonInput(): array {
-    return json_decode(file_get_contents('php://input') ?: '[]', true);
-}
 
 function jsonResponse($data, int $code = 200): void {
     http_response_code($code);

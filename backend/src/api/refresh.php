@@ -15,18 +15,22 @@ try {
 
 	switch ($method) {	
 		case 'POST':
-			$data = jsonInput();
+			$data = json_decode(file_get_contents('php://input'), true);;
 			$refresh = $data['refresh_token'] ?? '';
             $userId = consumeRefresh($refresh);
             if (!$userId) {
-				jsonResponse(['error' => 'Invalid refresh token'], 401);
+				jsonResponse([
+					'success' => false,
+					'error' => 'Invalid refresh token'
+				], 401);
 			}
 			$access  = makeJwt($userId);
 			$newRefresh = bin2hex(random_bytes(32));
 			storeRefresh($userId, $newRefresh, now() + REFRESH_LIFETIME);
 			jsonResponse([
+				'success' => true,
 				'access_token'  => $access,
-				'expires_in'    => ACCESS_LIFETIME,
+				'expires_at'    => now() + ACCESS_LIFETIME,
 				'refresh_token' => $newRefresh
 			]);
 			break;

@@ -15,16 +15,22 @@ try {
 
 	switch ($method) {	
 		case 'POST':
-			$data = jsonInput();
+			$data = json_decode(file_get_contents('php://input'), true);;
 			$login = $data['login'] ?? '';
             $password = $data['password'] ?? '';
             $user = getUserByLogin($login);
             
 			if (strlen($password) < 8) {
-				jsonResponse(['error' => 'Password must be ≥8 chars'], 422);
+				jsonResponse([
+					'success' => false,
+					'error' => 'Password must be 8 or more chars'
+				], 422);
 			}
 			if (getUserByLogin($login)) {
-				jsonResponse(['error' => 'Login already registered'], 409);
+				jsonResponse([
+					'success' => false,
+					'error' => 'Login already registered'
+				], 409);
 			}
 			
 			$userId = createUser($login, password_hash($password, PASSWORD_DEFAULT));
@@ -32,10 +38,11 @@ try {
 			// Auto‑login: выдаём токены сразу после регистрации
 			$access  = makeJwt($userId);
 			$refresh = bin2hex(random_bytes(32));
-			storeRefresh($pdo, $userId, $refresh, now() + REFRESH_LIFETIME);
+			storeRefresh($userId, $refresh, now() + REFRESH_LIFETIME);
 			jsonResponse([
+				'success' => true,
 				'access_token'  => $access,
-				'expires_in'    => ACCESS_LIFETIME,
+				'expires_at'    => now() + ACCESS_LIFETIME,
 				'refresh_token' => $refresh
 			], 201);
 			break;

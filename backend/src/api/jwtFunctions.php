@@ -38,7 +38,7 @@ function verifyJwt(string $token): object {
     return $result;
 }
 
-function requireAuth(): array {
+function requireAuth(): int {
     global $pdo;
     
     $hdr = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
@@ -48,8 +48,9 @@ function requireAuth(): array {
     }
 
     if (!preg_match('/^Bearer\s+(.*)$/i', $hdr, $m)) {
-        jsonResponse(['error' => 'Missing Bearer token. SERVER: ' . json_encode($_SERVER)], 401);
+        jsonResponse(['error' => 'Missing Bearer token'], 401);
     }
+    
     try {
         $decoded = verifyJwt($m[1]);
     } catch (Exception $e) {

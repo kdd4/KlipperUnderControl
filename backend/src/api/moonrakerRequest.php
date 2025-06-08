@@ -5,7 +5,7 @@ function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null)
     global $pdo;
 
     // Create task
-    $stmt = $pdo->prepare("INSERT INTO PrinterTasks(endpoint, method, data, result) VALUES (:endpoint, :method, :data, '')");
+    $stmt = $pdo->prepare("INSERT INTO PrinterTasks(user_id, endpoint, method, data, result) VALUES (1, :endpoint, :method, :data, '')");
 	$chk = $stmt->execute([':endpoint' => $endpoint, ':method' => $method, ':data' => $data ? json_encode($data) : 'NULL']);
     
     if (!$chk) {
