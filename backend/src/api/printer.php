@@ -24,7 +24,7 @@ try {
 
 	switch ($method) {
 		case 'GET':
-			$stmt = $pdo->prepare("SELECT * FROM PrinterTasks WHERE ready=False AND user_id=:user_id");
+			$stmt = $pdo->prepare("SELECT * FROM PrinterTasks WHERE completed=False AND user_id=:user_id");
 			$stmt->execute([':user_id' => $user_id]);
 			$tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			echo json_encode([
@@ -36,7 +36,7 @@ try {
 		case 'POST':
 			$data = json_decode(file_get_contents('php://input'), true);
 			if (isset($data['result']) and isset($data['httpCode']) and isset($data['error']) and isset($data['id'])) {
-				$stmt = $pdo->prepare("UPDATE PrinterTasks SET result=:result, httpCode=:httpCode, error=:error, ready=true WHERE id=:id AND user_id=:user_id");
+				$stmt = $pdo->prepare("UPDATE PrinterTasks SET result=:result, httpCode=:httpCode, error=:error, completed=true WHERE id=:id AND user_id=:user_id");
 				$chk = $stmt->execute([
 					':id' => $data['id'],
 					':user_id' => $user_id,

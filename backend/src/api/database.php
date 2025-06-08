@@ -12,8 +12,7 @@ try {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			login VARCHAR(20) NOT NULL UNIQUE,
 			password_hash VARCHAR(255) NOT NULL,
-			is_active BOOLEAN DEFAULT TRUE,
-			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			is_active BOOLEAN DEFAULT TRUE
 		)
 	");
 	$chk = $stmt->execute();
@@ -32,7 +31,7 @@ try {
 			result TEXT,
             error TEXT,
             httpCode INTEGER,
-			ready BOOLEAN DEFAULT FALSE,
+			completed BOOLEAN DEFAULT FALSE,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES Users(id) 
 				ON DELETE CASCADE
@@ -50,7 +49,7 @@ try {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			user_id INTEGER NOT NULL,
 			token VARCHAR(255) NOT NULL,
-			expires_at DATETIME NOT NULL,
+			expires_at TIMESTAMP NOT NULL,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES Users(id) 
 				ON DELETE CASCADE
@@ -61,6 +60,26 @@ try {
 	
 	if (!$chk) {
         throw new Exception("SQL Error: Create table refresh_tokens fail. Info: " . $stmt->errorInfo()[2]);
+    }
+
+	$stmt = $pdo->prepare("
+		CREATE INDEX IF NOT EXISTS PrinterTasksByUseridAndCompleted
+		ON PrinterTasks(user_id, completed)
+	");
+	$chk = $stmt->execute();
+	
+	if (!$chk) {
+        throw new Exception("SQL Error: Create index PrinterTasksByUseridAndCompleted fail. Info: " . $stmt->errorInfo()[2]);
+    }
+
+	$stmt = $pdo->prepare("
+		CREATE INDEX IF NOT EXISTS UsersByLoginAndActive
+		ON Users(login, is_active)
+	");
+	$chk = $stmt->execute();
+	
+	if (!$chk) {
+        throw new Exception("SQL Error: Create index UsersByLoginAndActive fail. Info: " . $stmt->errorInfo()[2]);
     }
 	
 } catch (Exception $e) {
