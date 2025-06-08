@@ -28,22 +28,23 @@ $body = file_get_contents('php://input');
 try {
     switch ($method) {
         case 'GET':
-            /*if (isset($_GET['action']) && $_GET['action'] === 'content') {
-                if (!is_file($fullPath)) {
-                    http_response_code(404);
-                    echo json_encode(['error' => 'File not found']);
+            if (isset($_GET['action']) && $_GET['action'] === 'content') {
+                $response = moonrakerRequest('get_dirdownloadectory', 'files', ['root' => 'gcodes', 'filename' => trim($path, '/')]);
+                
+                if (!isset($response['TEXT'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Error api/files: "TEXT" not found. "path" can be wrong']);
                     exit;
                 }
-                $content = file_get_contents($fullPath);
-                echo json_encode(['content' => $content]);
+                echo json_encode(['content' => $response['TEXT']]);
                 exit;
-            }*/
+            }
 
             $response = moonrakerRequest('get_directory', 'files', ['path' => 'gcodes' . $path]);
 
             if (!isset($response['result'])) {
                 http_response_code(400);
-                echo json_encode(['error' => 'Error api/macros: "result" not found. "path" can be wrong']);
+                echo json_encode(['error' => 'Error api/files: "result" not found. "path" can be wrong']);
                 exit;
             }
             

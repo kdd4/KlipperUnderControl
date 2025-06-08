@@ -1,7 +1,7 @@
 from config import *
-import MoonrakerPrinter as Printer
-import MoonrakerServer as Server
-import MoonrakerServerFile as Files
+import fake.MoonrakerPrinter as Printer
+import fake.MoonrakerServer as Server
+import fake.MoonrakerServerFile as Files
 import ServerAuth as Auth
 
 import asyncio

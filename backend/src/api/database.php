@@ -124,6 +124,28 @@ function getUserByLogin(string $login): ?array {
     return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 }
 
+function getUserById(int $id): ?array {
+	global $pdo;
+
+    $stmt = $pdo->prepare('SELECT * FROM Users WHERE id=?');
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
+function changePassword(int $id, string $password): void {
+	global $pdo;
+
+    $stmt = $pdo->prepare('UPDATE Users SET password_hash=? WHERE id=?');
+    $stmt->execute([password_hash($password, PASSWORD_DEFAULT), $id]);
+}
+
+function changeLogin(int $id, string $login): void{
+	global $pdo;
+
+    $stmt = $pdo->prepare('UPDATE Users SET login=? WHERE id=?');
+    $stmt->execute([$login, $id]);
+}
+
 function storeRefresh(int $userId, string $token, int $expires): void {
 	global $pdo;
 	
