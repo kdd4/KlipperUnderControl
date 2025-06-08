@@ -47,13 +47,55 @@ export function TemperatureDisplay() {
     return () => clearInterval(interval);
   }, []);
 
-  const getTemperatureColor = (current, target) => {
-    const diff = (current - target);
-    if (diff < 2) return 'var(--logo-color)';
-    if (diff < 10) return 'orange';
-    if (diff > 10) return 'rgb(182 0 196)';
-    return 'var(--text-light)';
+  /**
+   * Функция линейной интерполяции между двумя числами.
+   */
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  /**
+   * Интерполирует между двумя цветами, заданными объектами вида {r, g, b},
+   * используя коэффициент t (от 0 до 1). Результат возвращается в виде строки "rgb(r, g, b)".
+   */
+  const interpolateColor = (color1, color2, t) => {
+    const r = Math.round(lerp(color1.r, color2.r, t));
+    const g = Math.round(lerp(color1.g, color2.g, t));
+    const b = Math.round(lerp(color1.b, color2.b, t));
+    return `rgb(${r}, ${g}, ${b})`;
   };
+
+  // Задаем цветовые точки. При желании можно заменить на вычисленные значения из CSS-переменных.
+  const startColor = { r: 239, g: 245, b: 66 };   // Например, var(--logo-color)
+  const midColor   = { r: 255, g: 0, b: 0  };     // orange
+  const endColor   = { r: 182, g: 0,   b: 196 };     // rgb(182, 0, 196)
+
+  // Устанавливаем пороговые значения для диапазонов разницы.
+  const minDiff = -10;  // Ниже этой разницы – фиксированный начальный цвет.
+  const midDiff = 0;  // Промежуточная точка: именно здесь получаем orange.
+  const maxDiff = 10; // Выше или равная этой разнице – фиксированный конечный цвет.
+
+  /**
+  * Функция возвращает цвет с плавным градиентом в зависимости от разницы current - target.
+  */
+  const getTemperatureColor = (current, target) => {
+    const diff = current - target;
+
+    if (diff <= minDiff) {
+      // Если разница меньше или равна минимальному порогу – фиксированный начальный цвет.
+      return `rgb(${startColor.r}, ${startColor.g}, ${startColor.b})`;
+    } else if (diff >= maxDiff) {
+      // Если разница больше или равна максимальному порогу – фиксированный конечный цвет.
+      return `rgb(${endColor.r}, ${endColor.g}, ${endColor.b})`;
+    } else if (diff <= midDiff) {
+      // Разница между minDiff и midDiff – интерполируем от startColor к midColor.
+      const t = (diff - minDiff) / (midDiff - minDiff);
+      return interpolateColor(startColor, midColor, t);
+    } else {
+      // Разница между midDiff и maxDiff – интерполируем от midColor к endColor.
+      const t = (diff - midDiff) / (maxDiff - midDiff);
+      return interpolateColor(midColor, endColor, t);
+    }
+  };
+
 
   if (error) {
     return (

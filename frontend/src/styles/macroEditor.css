@@ -1,6 +1,9 @@
 .macro-grid {
   padding: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  width: 100%;
 }
+
 
 .macro-tile {
   background-color: rgba(255, 255, 255, 0.05);
@@ -243,10 +246,31 @@
 /* Модальное окно редактора макроса */
 .macro-editor-modal {
   width: 90%;
-  max-width: 1200px;
+  max-width: 97%;
   height: 80vh;
   display: flex;
-  flex-direction: column;
+  flex-flow: row wrap;
+  overflow-y: auto;
+}
+
+/* Размер скроллбара */
+.macro-editor-modal::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Трек скроллбара.
+   Свойство margin-right задаёт смещение трека от правого края.
+   Прозрачный фон и закругление обеспечивают нужный визуальный эффект. */
+.macro-editor-modal::-webkit-scrollbar-track {
+  background: transparent;
+  margin-right: 0.5em; /* подбирайте это значение по своему вкусу */
+  border-radius: 3em;
+}
+
+/* Сам ползунок (thumb) со скруглёнными краями */
+.macro-editor-modal::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 3em;
 }
 
 .editor-title-section {
@@ -258,6 +282,8 @@
   display: flex;
   gap: 1rem;
   overflow: hidden;
+  width: 100%;
+  min-height: 100%;
 }
 
 .editor-main {
@@ -379,7 +405,7 @@
 /* Селектор иконок */
 .icon-selector {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   gap: 0.3rem;
   margin-top: 0.5rem;
 }
@@ -424,7 +450,6 @@
   }
   
   .editor-help {
-    width: 100%;
     max-height: 200px;
     order: -1;
   }
@@ -435,7 +460,7 @@
   }
   
   .macro-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 2fr));
   }
 }
 
@@ -452,7 +477,6 @@
   
   .editor-header {
     flex-direction: column;
-    gap: 1rem;
   }
   
   .editor-actions {
@@ -491,7 +515,7 @@
 
 @media (max-width: 480px) {
   .macro-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 10fr;
   }
   
   .navigation-controls button {
@@ -799,4 +823,18 @@
 
 .macro-editor code {
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.editor-helper-container {
+  display: flex;
+  flex-direction: row;
+
+}
+
+.editor-help {
+  width: 30%;
+}
+
+.editor-header {
+  width: 100%;
 }

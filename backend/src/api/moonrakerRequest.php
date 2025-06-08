@@ -51,18 +51,18 @@ function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null)
     $httpCode = $fetch['httpCode'];
     $result = $fetch['result'];
 
+    $stmt = $pdo->prepare("DELETE FROM PrinterTasks WHERE id=:id");
+    $chk = $stmt->execute([':id' => $id]);
+    if (!$chk) {
+         throw new Exception("SQL Error: Error deleting task");
+    }
+
     if ($error) {
         throw new Exception("Moonraker error: " . $error);
     }
     
     if ($httpCode != 200) {
         throw new Exception("HTTP error code: " . $httpCode);
-    }
-
-    $stmt = $pdo->prepare("DELETE FROM PrinterTasks WHERE id=:id");
-    $chk = $stmt->execute([':id' => $id]);
-    if (!$chk) {
-         throw new Exception("SQL Error: Error deleting task");
     }
     
     return json_decode($result, true);

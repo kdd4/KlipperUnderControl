@@ -1,7 +1,7 @@
 from config import *
-import fake.MoonrakerPrinter as Printer
-import fake.MoonrakerServer as Server
-import fake.MoonrakerServerFile as Files
+import MoonrakerPrinter as Printer
+import MoonrakerServer as Server
+import MoonrakerServerFile as Files
 import ServerAuth as Auth
 
 import asyncio
@@ -59,10 +59,10 @@ async def make_request(method, endpoint, data):
             print(f'Error wrong method: {method}')
     return result
 
-def refresh_auth(tokens: dict):
+async def refresh_auth(tokens: dict):
     if tokens['expires_at'] > time.time():
         return tokens
-    tokens = refresh_auth(tokens['refresh_token'])
+    tokens = Auth.refresh_user(tokens['refresh_token'])
 
     if not tokens['success']:
         tokens = Auth.login_user(SERVER_LOGIN, SERVER_PASSWORD)
@@ -83,7 +83,7 @@ async def complete_task(task: dict, tokens: dict):
         result_json = await make_request(method, endpoint, data)
         status_code = 200 if result_json is not None else 400
 
-        tokens = refresh_auth(tokens)
+        tokens = await refresh_auth(tokens)
         post_task = requests.post(
             url=f'http://{SERVER_IP}:{SERVER_PORT}/api/printer.php',
             headers={
@@ -124,7 +124,7 @@ async def main():
     while True:
         try:
             time.sleep(1)
-            tokens = refresh_auth(tokens)
+            tokens = await refresh_auth(tokens)
             response = requests.get(
                 url=f"http://{SERVER_IP}:{SERVER_PORT}/api/printer.php",
                 headers={
@@ -132,7 +132,6 @@ async def main():
                 }
             )
 
-            print(response.text)
             response_json = response.json()
 
             if response.status_code != 200:

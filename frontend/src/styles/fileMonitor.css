@@ -934,7 +934,13 @@
   font-size: 1.1rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 590px) {
+  .file-grid {
+    grid-template-columns: repeat(2, 10fr);
+  }
+}
+
+@media (max-width: 500px) {
   .file-grid {
     grid-template-columns: repeat(2, 1fr);
   }

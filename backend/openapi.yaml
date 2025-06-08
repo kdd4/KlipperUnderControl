@@ -1,0 +1,331 @@
+openapi: 3.0.3
+info:
+  title: Klipper Under Control – Backend API
+  version: 1.0.0
+  description: |
+    OpenAPI описание REST‑API для удалённого управления 3D‑принтером через сервис **Klipper Under Control**.
+    Все ответы возвращаются в формате JSON. Часовой пояс сервера — UTC.
+    Коды ошибок приведены для типовых сценариев; фактическое поведение определено кодом на PHP.
+servers:
+  - url: http://localhost:8088
+    description: Локальный сервер разработки
+tags:
+  - name: Auth
+    description: Регистрация, аутентификация и токены
+  - name: Printer
+    description: Управление принтером и получение заданий
+  - name: Temperature
+    description: Чтение и установка температур
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+      required: [success, error]
+    RegisterRequest:
+      type: object
+      required: [login, password]
+      properties:
+        login:
+          type: string
+          example: alice
+        password:
+          type: string
+          format: password
+          example: secret123
+    TokenResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        expires_at:
+          type: integer
+          description: UNIX‑время истечения access‑токена
+          example: 1717846659
+        refresh_token:
+          type: string
+          example: 9bdb7ac6e3a14d8f84290d66c7e2baf2
+      required: [success, access_token, expires_at, refresh_token]
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token:
+          type: string
+          example: 9bdb7ac6e3a14d8f84290d66c7e2baf2
+    LogoutResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        status:
+          type: string
+          example: logged_out
+      required: [success, status]
+    TemperatureData:
+      type: object
+      properties:
+        temperature:
+          type: number
+          format: float
+          example: 205.1
+        target:
+          type: number
+          format: float
+          example: 210
+        power:
+          type: number
+          format: float
+          example: 0.57
+    TemperatureResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            extruder:
+              $ref: '#/components/schemas/TemperatureData'
+            heater_bed:
+              $ref: '#/components/schemas/TemperatureData'
+          required: [extruder, heater_bed]
+        timestamp:
+          type: integer
+          example: 1717846400
+      required: [success, data, timestamp]
+    TemperatureSetRequest:
+      type: object
+      required: [heater, target]
+      properties:
+        heater:
+          type: string
+          enum: [extruder, heater_bed]
+        target:
+          type: number
+          format: float
+          example: 60
+    TemperatureSetResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        heater:
+          type: string
+          example: heater_bed
+        target:
+          type: number
+          example: 60
+        current:
+          type: number
+          example: 25.3
+        message:
+          type: string
+          example: Нагрев heater_bed до 60°C
+        timestamp:
+          type: integer
+      required: [success, heater, target, message, timestamp]
+    PrinterTask:
+      type: object
+      properties:
+        id: { type: integer, example: 42 }
+        endpoint: { type: string, example: info }
+        method: { type: string, example: printer }
+        data: { type: string, example: '{"script":"M104 S200"}' }
+        result: { type: string, example: '{"result":{"state":"ready"}}' }
+        error: { type: string, nullable: true }
+        httpCode: { type: integer, example: 200 }
+        completed: { type: boolean, example: false }
+        created_at: { type: string, format: date-time, example: "2025-06-08T12:01:44Z" }
+    PrinterTaskList:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrinterTask'
+      required: [success, result]
+    PrinterTaskUpdateRequest:
+      type: object
+      required: [id, result, httpCode, error]
+      properties:
+        id: { type: integer }
+        result: 
+          description: JSON‑строка с данными, полученными от Moonraker
+          type: object
+        httpCode: { type: integer }
+        error: 
+          description: Текст ошибки или пустая строка
+          type: string
+paths:
+  /api/register:
+    post:
+      tags: [Auth]
+      summary: Регистрация нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        "200":
+          description: Успешная регистрация + автоматический вход
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResponse' }
+        "409":
+          description: Пользователь уже существует
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+  /api/login:
+    post:
+      tags: [Auth]
+      summary: Вход пользователя по логину и паролю
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        "200":
+          description: Успешный вход
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResponse' }
+        "401":
+          description: Неверные учётные данные
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+  /api/refresh:
+    post:
+      tags: [Auth]
+      summary: Обновление access‑токена по refresh‑токену
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RefreshRequest' }
+      responses:
+        "200":
+          description: Новый набор токенов
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResponse' }
+        "401":
+          description: Просроченный либо невалидный refresh‑токен
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+  /api/logout:
+    post:
+      tags: [Auth]
+      summary: Отзыв refresh‑токена (выход)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RefreshRequest' }
+      responses:
+        "200":
+          description: Пользователь вышел
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LogoutResponse' }
+  /api/temperature:
+    get:
+      tags: [Temperature]
+      summary: Текущие температуры хотэнда и стола
+      responses:
+        "200":
+          description: Актуальные данные
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TemperatureResponse' }
+    put:
+      tags: [Temperature]
+      summary: Установить целевую температуру
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TemperatureSetRequest' }
+      responses:
+        "200":
+          description: Команда успешно отправлена
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TemperatureSetResponse' }
+        "400":
+          description: Параметры вне диапазона или некорректны
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+  /api/printer:
+    get:
+      tags: [Printer]
+      summary: Получить список невыполненных задач
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Список задач
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PrinterTaskList' }
+        "401":
+          description: Нет или неверный JWT‑токен
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+    post:
+      tags: [Printer]
+      summary: Отметить задачу как выполненную
+      description: |
+        Используется системным сервисом, который выполняет команды Moonraker.
+        Обычным клиентам не требуется.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PrinterTaskUpdateRequest' }
+      responses:
+        "200":
+          description: Строка обновлена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        "400":
+          description: Неверный формат запроса
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+security:
+  - {}
