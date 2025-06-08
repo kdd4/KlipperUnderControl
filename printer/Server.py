@@ -2,6 +2,7 @@ from config import *
 import fake.MoonrakerPrinter as Printer
 import fake.MoonrakerServer as Server
 import fake.MoonrakerServerFile as Files
+import ServerAuth as Auth
 
 import asyncio
 import requests
@@ -58,7 +59,19 @@ async def make_request(method, endpoint, data):
             print(f'Error wrong method: {method}')
     return result
 
-async def complete_task(task: dict):
+def refresh_auth(tokens: dict):
+    if tokens['expires_at'] > time.time():
+        return tokens
+    tokens = refresh_auth(tokens['refresh_token'])
+
+    if not tokens['success']:
+        tokens = Auth.login_user(SERVER_LOGIN, SERVER_PASSWORD)
+        if not tokens['success']:
+            print(f"Error with refreshing JWT token, http_code: {tokens['httpcode']}, error: {tokens['error']}")
+            exit()
+    return tokens
+
+async def complete_task(task: dict, tokens: dict):
     try:
         if DEBUG_MODE:
             print("Starting task: ", task)
@@ -70,9 +83,13 @@ async def complete_task(task: dict):
         result_json = await make_request(method, endpoint, data)
         status_code = 200 if result_json is not None else 400
 
-        post_task = requests.put(
+        tokens = refresh_auth(tokens)
+        post_task = requests.post(
             url=f'http://{SERVER_IP}:{SERVER_PORT}/api/printer.php',
-            headers={'Content-Type': 'application/json'},
+            headers={
+                'Authorization': f'Bearer {tokens['access_token']}',
+                'Content-Type': 'application/json'
+            },
             json={
                 'id': task_id,
                 'result': result_json if result_json is not None else 'NONE' ,
@@ -91,13 +108,31 @@ async def complete_task(task: dict):
         print('Exception in complete_task:', exc)
 
 async def main():
+    tokens = Auth.login_user(SERVER_LOGIN, SERVER_PASSWORD)
+
+    # Unauthorized
+
+    if not tokens['success'] and tokens['httpcode'] == 401:
+        tokens = Auth.register_user(SERVER_LOGIN, SERVER_PASSWORD)
+        if not tokens['success']:
+            if tokens['httpcode'] == 409 or tokens['httpcode'] == 422:
+                print("WRONG LOGIN OR PASSWORD")
+            else:
+                print(f"REGISTER ERROR. http_code: {tokens['httpcode']}")
+            exit()
+
     while True:
         try:
-            time.sleep(0.5)
+            time.sleep(1)
+            tokens = refresh_auth(tokens)
             response = requests.get(
-                url="http://localhost:8088/api/printer.php"
+                url=f"http://{SERVER_IP}:{SERVER_PORT}/api/printer.php",
+                headers={
+                    'Authorization': f'Bearer {tokens['access_token']}'
+                }
             )
 
+            print(response.text)
             response_json = response.json()
 
             if response.status_code != 200:
@@ -112,7 +147,7 @@ async def main():
 
             async with asyncio.TaskGroup() as tg:
                 for task in tasks:
-                    tg.create_task(complete_task(task))
+                    tg.create_task(complete_task(task, tokens))
 
         except Exception as exc:
             if DEBUG_MODE:

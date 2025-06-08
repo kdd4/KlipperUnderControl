@@ -1,11 +1,11 @@
 <?php
-require __DIR__ . "/database.php";
+require_once __DIR__ . "/database.php";
 
 function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null) {
     global $pdo;
 
     // Create task
-    $stmt = $pdo->prepare("INSERT INTO PrinterTasks(endpoint, method, data, result) VALUES (:endpoint, :method, :data, '')");
+    $stmt = $pdo->prepare("INSERT INTO PrinterTasks(user_id, endpoint, method, data, result) VALUES (1, :endpoint, :method, :data, '')");
 	$chk = $stmt->execute([':endpoint' => $endpoint, ':method' => $method, ':data' => $data ? json_encode($data) : 'NULL']);
     
     if (!$chk) {
@@ -19,15 +19,15 @@ function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null)
 
     while ($cnt < $cnt_limit) {
         sleep(1);
-        $stmt = $pdo->prepare("SELECT ready FROM PrinterTasks WHERE id=:id");
+        $stmt = $pdo->prepare("SELECT completed FROM PrinterTasks WHERE id=:id");
         $stmt->execute([':id' => $id]);
         $fetch = $stmt->fetch();
 
-        if (!isset($fetch['ready'])) {
-            throw new Exception("Fetch error: 'ready' not found: " . json_encode($fetch));
+        if (!isset($fetch['completed'])) {
+            throw new Exception("Fetch error: 'completed' not found: " . json_encode($fetch));
         }
 
-        $result = $fetch['ready'];
+        $result = $fetch['completed'];
         
         if ($result) {
             break;
@@ -37,7 +37,7 @@ function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null)
     }
 
     if ($cnt == $cnt_limit) {
-        $stmt = $pdo->prepare("UPDATE PrinterTasks SET result='TL', error='Time limit', ready=True WHERE id=:id");
+        $stmt = $pdo->prepare("UPDATE PrinterTasks SET result='TL', error='Time limit', completed=True WHERE id=:id");
         $chk = $stmt->execute([':id' => $id]);
         if (!$chk) {
             throw new Exception("SQL Error: Error updating task (TL)");

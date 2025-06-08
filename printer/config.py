@@ -5,6 +5,8 @@ API_KEY = ""  # Если используется аутентификация
 
 SERVER_IP = 'localhost'
 SERVER_PORT = 8088
+SERVER_LOGIN = 'root'
+SERVER_PASSWORD = '12345678'
 
 UPLOAD_TIMEOUT = 30
 DOWNLOAD_TIMEOUT = 30

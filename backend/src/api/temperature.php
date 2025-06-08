@@ -4,13 +4,12 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, PUT, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require __DIR__ . "/moonrakerRequest.php";
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { exit(0); }
+
+require_once __DIR__ . "/moonrakerRequest.php";
 
 try {
-    $method = '';
-	if (isset($_SERVER['REQUEST_METHOD'])) {
-		$method = $_SERVER['REQUEST_METHOD'];
-	}
+    $method = $_SERVER['REQUEST_METHOD'];
 
     switch ($method) {
         case 'GET':
@@ -120,18 +119,13 @@ try {
                     : "Выключение нагревателя {$heater}",
                 'timestamp' => time()
             ]);
-
             break;
-
-        case 'OPTIONS':
-			echo json_encode(['Allow' => 'GET,PUT,OPTIONS']);
-			break;
 
         default:
             http_response_code(405);
             echo json_encode(['success' => false, 'error' => 'Method "' . $method . '" not allowed']);
     }
-} catch (PDOException $e) {
+} catch (Exception $e) {
     $response = [
         'success' => false,
         'error' => $e->getMessage(),
@@ -140,6 +134,7 @@ try {
     ];
 	http_response_code(500);
 	echo json_encode($response);
+    exit(0);
 }
 
 ?>
