@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . "/database.php";
+require_once __DIR__ . "/database.php";
 
 function moonrakerRequest($endpoint = 'info', $method = 'printer', $data = null) {
     global $pdo;

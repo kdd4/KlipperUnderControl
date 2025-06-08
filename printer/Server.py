@@ -70,7 +70,7 @@ async def complete_task(task: dict):
         result_json = await make_request(method, endpoint, data)
         status_code = 200 if result_json is not None else 400
 
-        post_task = requests.put(
+        post_task = requests.post(
             url=f'http://{SERVER_IP}:{SERVER_PORT}/api/printer.php',
             headers={'Content-Type': 'application/json'},
             json={
@@ -93,11 +93,13 @@ async def complete_task(task: dict):
 async def main():
     while True:
         try:
-            time.sleep(0.5)
+            time.sleep(1)
             response = requests.get(
-                url="http://localhost:8088/api/printer.php"
+                url="http://localhost:8088/api/printer.php",
+                headers={'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30'}
             )
 
+            print(response.text)
             response_json = response.json()
 
             if response.status_code != 200:

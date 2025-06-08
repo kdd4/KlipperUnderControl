@@ -1,20 +1,31 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, PUT, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require __DIR__ . "/database.php";
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { exit(0); }
+
+require_once __DIR__ . "/database.php";
+require_once __DIR__ . "/jwtFunctions.php";
 
 try {
-	$method = '';
-	if (isset($_SERVER['REQUEST_METHOD'])) {
-		$method = $_SERVER['REQUEST_METHOD'];
+	$user_id = requireAuth();
+	if (!$user_id) {
+		http_response_code(401);
+		echo json_encode([
+				'success' => false,
+				'error' => "Unauthorized"
+		]);
+		exit(0);
 	}
+
+	$method = $_SERVER['REQUEST_METHOD'];
 
 	switch ($method) {
 		case 'GET':
-			$stmt = $pdo->query("SELECT * FROM PrinterTasks WHERE ready=False");
+			$stmt = $pdo->prepare("SELECT * FROM PrinterTasks WHERE ready=False AND user_id=:user_id");
+			$stmt->execute([':user_id' => $user_id]);
 			$tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			echo json_encode([
 					'success' => true,
@@ -22,12 +33,13 @@ try {
 			]);
 			break;
 			
-		case 'PUT':
+		case 'POST':
 			$data = json_decode(file_get_contents('php://input'), true);
 			if (isset($data['result']) and isset($data['httpCode']) and isset($data['error']) and isset($data['id'])) {
-				$stmt = $pdo->prepare("UPDATE PrinterTasks SET result=:result, httpCode=:httpCode, error=:error, ready=true WHERE id=:id");
+				$stmt = $pdo->prepare("UPDATE PrinterTasks SET result=:result, httpCode=:httpCode, error=:error, ready=true WHERE id=:id AND user_id=:user_id");
 				$chk = $stmt->execute([
 					':id' => $data['id'],
+					':user_id' => $user_id,
 					':result' =>  json_encode($data['result']),
 					':httpCode' => $data['httpCode'],
 					':error' => $data['error']
@@ -53,10 +65,6 @@ try {
 			}
 			break;
 			
-		case 'OPTIONS':
-			echo json_encode(['Allow' => 'GET,PUT,OPTIONS']);
-			break;
-			
 		default:
 			http_response_code(405);
 			echo json_encode([
@@ -65,11 +73,14 @@ try {
 			]);
 	}
 
-} catch (PDOException $e) {
+} catch (Exception $e) {
 	http_response_code(500);
 	echo json_encode([
 		'success' => false,
-		'error' => $e->getMessage()
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+        'timestamp' => time()
 	]);
+	exit(0);
 }
 ?>
