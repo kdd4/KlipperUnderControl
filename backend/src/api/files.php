@@ -1,93 +1,85 @@
 <?php
+// Включение отладки
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Базовые заголовки CORS
 header('Content-Type: application/json; charset=UTF-8');
+header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
+
+// Динамический CORS
 header("Access-Control-Allow-Origin: *");
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 // Обработка предварительного OPTIONS запроса
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Access-Control-Max-Age: 86400');
     exit(0);
 }
 
-require_once __DIR__ . "/moonrakerRequest.php";
+// Путь к директории G-кодов
+$rootDir = __DIR__ . '/../../printer_data/gcodes';
+if (!file_exists($rootDir)) {
+    mkdir($rootDir, 0755, true);
+}
+$rootDir = realpath($rootDir);
 
-// Путь к директории макросов
+if ($rootDir === false) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Gcodes dir not found or cannot be created: ' . __DIR__]);
+    exit;
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
-$path = $_GET['path'] ?? '';
+$path = $_GET['path'] ?? '/';
 
 // Логирование входящего запроса
 error_log("[$method] $path - " . json_encode($_GET));
 
+// Нормализация пути
 $path = str_replace(['/prints', '//'], ['', '/'], $path);
 $path = trim($path, '/');
-$path = $path === '' ? '' : '/' . $path;
+$path = $path === '' ? '/' : '/' . $path;
+$fullPath = $rootDir . $path;
 
-// Обработка тела запроса
-$body = file_get_contents('php://input');
+// Проверка безопасности пути
+$fullPath = realpath($fullPath);
+if ($fullPath === false || strpos($fullPath, $rootDir) !== 0) {
+    http_response_code(403);
+    echo json_encode([
+        'error' => 'Invalid path', 
+        'requested' => $path,
+        'root' => $rootDir,
+        'full' => $fullPath
+    ]);
+    exit;
+}
 
 try {
     switch ($method) {
         case 'GET':
-            if (isset($_GET['action']) && $_GET['action'] === 'content') {
-                $response = moonrakerRequest('get_dirdownloadectory', 'files', ['root' => 'gcodes', 'filename' => trim($path, '/')]);
-                
-                if (!isset($response['TEXT'])) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Error api/files: "TEXT" not found. "path" can be wrong']);
-                    exit;
-                }
-                echo json_encode(['content' => $response['TEXT']]);
-                exit;
-            }
-
-            $response = moonrakerRequest('get_directory', 'files', ['path' => 'gcodes' . $path]);
-
-            if (!isset($response['result'])) {
+            if (!is_dir($fullPath)) {
                 http_response_code(400);
-                echo json_encode(['error' => 'Error api/files: "result" not found. "path" can be wrong']);
+                echo json_encode(['error' => 'Not a directory']);
                 exit;
             }
             
             $items = [];
-            foreach ($response['result']['dirs'] as $file) {
+            foreach (scandir($fullPath) as $file) {
+                if ($file === '.' || $file === '..') continue;
+                $itemPath = $fullPath . '/' . $file;
                 $items[] = [
-                    'name' => $file['dirname'],
-                    'isDir' => true,
-                    'size' => $file['size'],
-                    'modified' => $file['modified']
-                ];
-            }
-
-            foreach ($response['result']['files'] as $file) {
-                $items[] = [
-                    'name' => $file['filename'],
-                    'isDir' => false,
-                    'size' => $file['size'],
-                    'modified' => $file['modified']
+                    'name' => $file,
+                    'isDir' => is_dir($itemPath),
+                    'size' => is_file($itemPath) ? filesize($itemPath) : 0,
+                    'modified' => date('Y-m-d H:i:s', filemtime($itemPath))
                 ];
             }
             echo json_encode(['files' => $items]);
             break;
 
-        /*case 'PUT':
-            if (empty($body)) {
-                http_response_code(400);
-                echo json_encode(['error' => 'Missing content']);
-                exit;
-            }
-            
-            if (file_put_contents($fullPath, $body) === false) {
-                http_response_code(500);
-                echo json_encode(['error' => 'Failed to write file']);
-                exit;
-            }
-            
-            echo json_encode(['success' => true]);
-            break;
-
         case 'POST':
-            $jsonBody = json_decode($body, true) ?? [];
-
             // Создание директории
             if (isset($jsonBody['action']) && $jsonBody['action'] === 'create_dir') {
                 $name = $jsonBody['name'] ?? null;
@@ -188,21 +180,15 @@ try {
             
             echo json_encode(['success' => true]);
             break;
-*/
+
         default:
             http_response_code(405);
             echo json_encode(['error' => 'Method not allowed']);
     }
 } catch (Exception $e) {
-    $response = [
-        'success' => false,
+    http_response_code(500);
+    echo json_encode([
         'error' => $e->getMessage(),
-        'trace' => $e->getTraceAsString(),
-        'timestamp' => time()
-    ];
-	http_response_code(500);
-	echo json_encode($response);
-    exit(0);
+        'trace' => $e->getTrace()
+    ]);
 }
-
-?>

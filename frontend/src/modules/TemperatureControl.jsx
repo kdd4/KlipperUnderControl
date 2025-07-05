@@ -54,7 +54,6 @@ export function TemperatureControl() {
       
       // Очистка поля ввода после успешной установки
       setTimeout(() => {
-        setTargetTemp(prev => ({ ...prev, [type]: 0 }));
         setStatus(prev => ({ ...prev, [type]: null }));
       }, 3000);
       
@@ -83,6 +82,11 @@ export function TemperatureControl() {
   };
 
   const handleInputChange = (type, value) => {
+    if (value === '') {
+      setTargetTemp(prev => ({ ...prev, [type]: '' }));
+      return;
+    }
+    
     const numValue = Number(value);
     const limits = {
       extruder: { min: 0, max: 300 },
@@ -179,9 +183,9 @@ export function TemperatureControl() {
       <div className="emergency-controls">
         <button 
           className="emergency-button"
-          onClick={async () => {
-            await handleSetTemp('extruder');
-            await handleSetTemp('bed');
+          onClick={() => {
+            handlePresetClick('extruder', 0);
+            handlePresetClick('bed', 0);
           }}
           disabled={isLoading.extruder || isLoading.bed}
         >

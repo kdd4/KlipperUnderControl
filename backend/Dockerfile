@@ -17,6 +17,5 @@ COPY src/ /var/www/html/
 RUN chmod go+rw /var
 RUN chmod go+rw /var/www
 RUN chmod go+rw /var/www/html
-RUN chmod go+rw /var/www/html
 RUN chmod go+rw /var/www/html/database
 RUN chmod go+rw /var/www/html/database/db.sqlite

@@ -110,9 +110,7 @@ async def complete_task(task: dict, tokens: dict):
 async def main():
     tokens = Auth.login_user(SERVER_LOGIN, SERVER_PASSWORD)
 
-    # Unauthorized
-
-    if not tokens['success'] and tokens['httpcode'] == 401:
+    if not tokens['success'] and tokens['httpcode'] == 401: # Unauthorized
         tokens = Auth.register_user(SERVER_LOGIN, SERVER_PASSWORD)
         if not tokens['success']:
             if tokens['httpcode'] == 409 or tokens['httpcode'] == 422:
